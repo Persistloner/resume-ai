@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
+import { v4 as uuid } from "uuid"
 import { buildParseResumePrompt } from "@/lib/ai/prompts/parse-resume"
+import { normalizeResumeText, normalizeBullets } from "@/lib/normalize-resume-text"
 
 // ─── Config ─────────────────────────────────────────────────────
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
 const ALLOWED_TYPES = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "text/plain", // .txt
 ] as const
 const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 const TEMPERATURE = 0.1
@@ -21,7 +23,6 @@ function log(phase: string, details: Record<string, unknown> = {}) {
 }
 
 function cleanJsonText(text: string): string {
-  // Strip markdown code fences if present
   let cleaned = text.trim()
   if (cleaned.startsWith("```")) {
     cleaned = cleaned.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "")
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
   // 2. Validate file type
   if (!ALLOWED_TYPES.includes(file.type as (typeof ALLOWED_TYPES)[number])) {
     return NextResponse.json(
-      { error: "仅支持 PDF 和 DOCX 格式文件" },
+      { error: "仅支持 DOCX 和 TXT 格式文件。推荐使用 Word 导出的 DOCX 简历，可获得最佳解析效果。" },
       { status: 400 }
     )
   }
@@ -86,40 +87,54 @@ export async function POST(request: Request) {
   const buffer = Buffer.from(await file.arrayBuffer())
 
   try {
-    if (file.type === "application/pdf") {
-      const { PDFParse } = await import("pdf-parse")
-      const parser = new PDFParse({ data: buffer })
-      const result = await parser.getText()
-      extractedText = result.text
-      await parser.destroy()
+    if (file.type === "text/plain") {
+      // ── TXT: direct UTF-8 decode ──────────────────────────
+      extractedText = buffer.toString("utf-8")
+      log("txt-extracted", { chars: extractedText.length })
     } else {
+      // ── DOCX: mammoth ─────────────────────────────────────
       const mammoth = await import("mammoth")
       const result = await mammoth.extractRawText({ buffer })
       extractedText = result.value
+      log("docx-extracted", { chars: extractedText.length })
+
+      // Warn if extraction seems incomplete
+      if (result.messages && result.messages.length > 0) {
+        log("docx-warnings", { messages: result.messages.slice(0, 5) })
+      }
     }
   } catch (error) {
-    log("extract-error", { error: String(error) })
+    const message = error instanceof Error ? error.message : String(error)
+    log("extract-error", { error: message })
     return NextResponse.json(
-      { error: "文件解析失败，请确认文件未损坏且包含可提取的文本内容" },
+      { error: `文件解析失败：${message.slice(0, 200)}` },
       { status: 422 }
     )
   }
 
+  // 5. Validate extracted text
   if (!extractedText || extractedText.trim().length < 10) {
     return NextResponse.json(
-      { error: "未能从文件中提取到足够的文本内容，请确认简历不是扫描图片" },
+      { error: "未能从文件中提取到足够的文本内容，请确认文件包含可读取的文本。" },
       { status: 422 }
     )
   }
 
   log("text-extracted", {
     chars: extractedText.length,
-    preview: extractedText.slice(0, 100),
+    preview: extractedText.slice(0, 200),
   })
 
-  // 5. Call DeepSeek to structure the text
-  const { system, user } = buildParseResumePrompt(extractedText)
+  // 6. Normalize text
+  const normalizedText = normalizeResumeText(extractedText)
+  log("text-normalized", {
+    before: extractedText.length,
+    after: normalizedText.length,
+    removed: extractedText.length - normalizedText.length,
+  })
 
+  // 7. Call DeepSeek to structure the text
+  const { system, user } = buildParseResumePrompt(normalizedText)
   log("ai-request-start")
 
   try {
@@ -161,8 +176,7 @@ export async function POST(request: Request) {
       usage: data.usage,
     })
 
-    // 6. Parse the structured JSON
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // 8. Parse the structured JSON
     let parsed: Record<string, any>
     try {
       parsed = JSON.parse(jsonText)
@@ -174,7 +188,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // 7. Validate and normalize the result
+    // 9. Build normalized result — normalize all bullet markers to standard "- " format
+    //    so the editor (raw text) and preview (structured render) always agree.
     const result = {
       personalInfo: {
         fullName: String(parsed.personalInfo?.fullName ?? ""),
@@ -182,10 +197,11 @@ export async function POST(request: Request) {
         phone: String(parsed.personalInfo?.phone ?? ""),
         location: String(parsed.personalInfo?.location ?? ""),
         title: String(parsed.personalInfo?.title ?? ""),
-        summary: String(parsed.personalInfo?.summary ?? ""),
+        summary: normalizeBullets(String(parsed.personalInfo?.summary ?? "")),
       },
       education: Array.isArray(parsed.education)
         ? parsed.education.map((e: Record<string, any>) => ({
+            id: uuid(),
             school: String(e.school ?? ""),
             degree: String(e.degree ?? ""),
             field: String(e.field ?? ""),
@@ -193,25 +209,42 @@ export async function POST(request: Request) {
             endDate: String(e.endDate ?? ""),
           }))
         : [],
-      experience: Array.isArray(parsed.experience)
-        ? parsed.experience.map((e: Record<string, any>) => ({
+      workExperience: Array.isArray(parsed.workExperience)
+        ? parsed.workExperience.map((e: Record<string, any>) => ({
+            id: uuid(),
             company: String(e.company ?? ""),
-            position: String(e.position ?? ""),
+            role: String(e.role ?? ""),
             startDate: String(e.startDate ?? ""),
             endDate: String(e.endDate ?? ""),
             current: Boolean(e.current ?? false),
-            description: String(e.description ?? ""),
+            description: normalizeBullets(String(e.description ?? "")),
+            optimizedDescription: "",
           }))
         : [],
       skills: Array.isArray(parsed.skills)
         ? parsed.skills.map((s: Record<string, any>) => ({
-            name: String(s.name ?? ""),
+            id: uuid(),
+            title: String(s.title ?? ""),
+            description: normalizeBullets(String(s.description ?? "")),
+            optimizedDescription: "",
+            abilityCards: [] as any[],
+          }))
+        : [],
+      projectExperience: Array.isArray(parsed.projectExperience)
+        ? parsed.projectExperience.map((p: Record<string, any>) => ({
+            id: uuid(),
+            name: String(p.name ?? ""),
+            role: String(p.role ?? ""),
+            duration: String(p.duration ?? ""),
+            description: normalizeBullets(String(p.description ?? "")),
+            optimizedDescription: "",
           }))
         : [],
     }
 
     log("success", {
-      expCount: result.experience.length,
+      workCount: result.workExperience.length,
+      projCount: result.projectExperience.length,
       eduCount: result.education.length,
       skillCount: result.skills.length,
     })

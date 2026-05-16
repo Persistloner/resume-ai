@@ -246,4 +246,117 @@ export const testCases: TestCase[] = [
     ],
   },
 
+  // ─── Case 9: AI PM Positioning — JD Mode ────────────────────────
+  {
+    id: "case-09-ai-pm-positioning",
+    label: "AI产品经理定位 — 5步法角色化输出",
+    input: {
+      company: "某翻译服务公司",
+      position: "翻译",
+      description: "独立完成科技、政经、企业领域文本英汉互译，累计翻译量超6万字。",
+      targetJD: `AI 产品经理
+岗位职责：
+1. 负责 AI 产品需求分析与方案设计
+2. 深入理解用户场景，将需求转化为结构化产品文档
+3. 与算法、工程团队协作推动产品落地
+4. 通过数据分析与用户反馈驱动产品迭代`,
+    },
+    idealDirection: [
+      "从翻译工作提取'信息提取''语义准确性''逻辑重组'等可迁移能力",
+      "输出包含 transferableSkills 数组（2-5个名词短语）",
+      "输出包含 rolePersona（涉及AI产品思维）",
+      "输出包含 coreInsight（一句话洞察）",
+      "positionedText 为自然中文职场表达",
+      "用产品思维语言描述翻译经验，但保留翻译岗位身份",
+    ],
+    forbiddenDirection: [
+      "编造产品经理相关工作（如'撰写PRD''需求分析'）",
+      "编造AI/ML技术经验",
+      "把翻译岗位直接包装成产品经理",
+      "出现'赋能''闭环''抓手'等黑话",
+      "出现'主导''战略''从0到1'等夸大词",
+    ],
+  },
+
+  // ─── Case 10: Operations Positioning — JD Mode ──────────────────
+  {
+    id: "case-10-ops-positioning",
+    label: "运营岗定位 — 角色人格差异化输出",
+    input: {
+      company: "某教育科技公司",
+      position: "内容编辑",
+      description: "负责公众号内容撰写与排版，每周发布3篇文章，回复读者评论，定期整理发布数据。",
+      targetJD: `新媒体运营
+岗位职责：
+1. 负责新媒体矩阵内容策划与日常运营
+2. 结合用户画像策划高传播性内容
+3. 跟踪分析运营数据，优化内容策略
+4. 提升粉丝增长与用户活跃度`,
+    },
+    idealDirection: [
+      "rolePersona 体现运营角色特征（用户洞察/数据驱动/内容优化等）",
+      "transferableSkills 包含'内容策划''用户理解''数据反馈'等运营相关能力",
+      "positionedText 风格偏数据导向和用户视角",
+      "与案例9（AI PM）的输出风格有明显差异",
+    ],
+    forbiddenDirection: [
+      "编造'粉丝增长XX%'等数据",
+      "编造'内容矩阵搭建'或'策略制定'",
+      "把'发布3篇'夸大为'主导内容体系'",
+      "出现模板化语言或黑话",
+    ],
+  },
+
+  // ─── Case 11: Generic Positioning — No JD ───────────────────────
+  {
+    id: "case-11-generic-positioning",
+    label: "通用职业定位 — 无JD模式",
+    input: {
+      company: "某连锁咖啡店",
+      position: "兼职店员",
+      description: "负责收银、饮品制作、店面清洁，接待到店顾客约50人/天。",
+      targetJD: "",
+    },
+    idealDirection: [
+      "无JD时仍输出合理的 rolePersona（通用执行角色）",
+      "transferableSkills 合理（如'服务意识''事务管理'）",
+      "coreInsight 诚实反映信息量",
+      "positionedText 保持简洁，不过度包装",
+    ],
+    forbiddenDirection: [
+      "编造'库存管理''销售分析'等不存在职责",
+      "把店员包装成'门店运营'或'管理岗'",
+      "过度输出（信息极少时不强行扩展）",
+    ],
+  },
+
+  // ─── Case 12: Skill Positioning — JD Mode ───────────────────────
+  {
+    id: "case-12-skill-positioning",
+    label: "技能定位 — JD匹配模式",
+    input: {
+      company: "",
+      position: "前端开发",
+      description: "熟练使用 React 技术栈，有 Vue 项目经验，了解 Webpack 配置和前端工程化流程。",
+      targetJD: `高级前端工程师
+岗位要求：
+1. 精通 React/Vue 等主流框架
+2. 具备前端工程化体系建设经验
+3. 熟悉性能优化与构建工具链
+4. 有技术选型与团队技术规范制定经验`,
+    },
+    idealDirection: [
+      "从'React+Vue双技术栈'提炼'技术适应性'",
+      "从'了解Webpack'提炼'工程化思维'",
+      "rolePersona 体现高级前端思维",
+      "不把'了解'写成'精通'，不把'有经验'写成'主导'",
+    ],
+    forbiddenDirection: [
+      "编造'架构设计'或'性能优化'经验",
+      "编造'团队技术规范制定'经历",
+      "把'了解'夸大为'精通'",
+      "出现模板化语言",
+    ],
+  },
+
 ]

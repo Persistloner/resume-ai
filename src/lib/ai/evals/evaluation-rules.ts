@@ -84,6 +84,97 @@ export const evaluationDimensions: EvaluationDimension[] = [
   },
 ]
 
+// ─── Career Positioning Quality Check ─────────────────────────────
+
+export interface PositioningQualityCheck {
+  id: string
+  label: string
+  /** Returns true if check passes */
+  validate: (output: Record<string, unknown>) => boolean
+}
+
+export const positioningQualityChecks: PositioningQualityCheck[] = [
+  {
+    id: "json_valid",
+    label: "输出为有效 JSON",
+    validate: () => true, // JSON.parse already done before validation
+  },
+  {
+    id: "has_positioned_text",
+    label: "包含 positionedText 字段且非空",
+    validate: (output) =>
+      typeof output.positionedText === "string" && output.positionedText.trim().length > 0,
+  },
+  {
+    id: "has_transferable_skills",
+    label: "包含 transferableSkills 数组",
+    validate: (output) => Array.isArray(output.transferableSkills),
+  },
+  {
+    id: "transferable_skills_count",
+    label: "transferableSkills 数量在 1-5 之间",
+    validate: (output) => {
+      const skills = output.transferableSkills as unknown[]
+      return Array.isArray(skills) && skills.length >= 1 && skills.length <= 5
+    },
+  },
+  {
+    id: "has_role_persona",
+    label: "包含 rolePersona 字段且非空",
+    validate: (output) =>
+      typeof output.rolePersona === "string" && output.rolePersona.trim().length > 0,
+  },
+  {
+    id: "has_core_insight",
+    label: "包含 coreInsight 字段且非空",
+    validate: (output) =>
+      typeof output.coreInsight === "string" && output.coreInsight.trim().length > 0,
+  },
+  {
+    id: "no_fabrication",
+    label: "positionedText 不包含编造的数据指标",
+    validate: (output) => {
+      const text = String(output.positionedText || "")
+      // Check for common fabricated metrics patterns
+      const fabricationPatterns = [
+        /\d+%/,
+        /增长\d/,
+        /提升\d/,
+        /降低\d/,
+      ]
+      return !fabricationPatterns.some((p) => p.test(text))
+    },
+  },
+  {
+    id: "no_blacklist",
+    label: "不包含黑名单词汇",
+    validate: (output) => {
+      const text = String(output.positionedText || "")
+      return checkBlacklist(text).length === 0
+    },
+  },
+]
+
+/**
+ * Run all positioning quality checks against parsed output.
+ * Returns passing check count and list of failures.
+ */
+export function validatePositioningOutput(
+  parsedOutput: Record<string, unknown>
+): { passed: number; total: number; failures: string[] } {
+  const failures: string[] = []
+  for (const check of positioningQualityChecks) {
+    if (!check.validate(parsedOutput)) {
+      failures.push(check.label)
+    }
+  }
+  return {
+    passed: positioningQualityChecks.length - failures.length,
+    total: positioningQualityChecks.length,
+    failures,
+  }
+}
+
 // ─── Blacklist Check ────────────────────────────────────────────
 
 /** Words/phrases that must NOT appear in output */

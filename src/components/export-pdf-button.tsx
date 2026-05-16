@@ -3,33 +3,31 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { exportResumeToPDF } from "@/lib/export-pdf"
+import { useResumeStore } from "@/lib/store"
 import { Download, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 export function ExportPDFButton() {
   const [loading, setLoading] = useState(false)
+  const resume = useResumeStore((s) => s.resume)
 
   const handleExport = async () => {
-    const element = document.getElementById("resume-preview")
-    if (!element) {
-      toast.error("未找到简历预览内容")
-      return
-    }
-
     setLoading(true)
 
     await exportResumeToPDF({
-      element,
-      filename: "resume",
+      resume,
       onStart: () => {
-        toast.loading("正在生成 PDF...", { id: "pdf-export" })
+        toast.info("正在准备导出，请在弹出的打印对话框中：选择「另存为 PDF」→ 点击保存 → 选择保存位置", {
+          id: "pdf-export",
+          duration: 6000,
+        })
       },
       onSuccess: () => {
-        toast.success("PDF 导出成功", { id: "pdf-export" })
+        toast.success("PDF 导出完成", { id: "pdf-export" })
         setLoading(false)
       },
       onError: (error) => {
-        toast.error(error.message || "PDF 导出失败，请重试", { id: "pdf-export" })
+        toast.error(error.message || "导出失败，请重试", { id: "pdf-export" })
         setLoading(false)
       },
     })
@@ -48,7 +46,7 @@ export function ExportPDFButton() {
       ) : (
         <Download className="size-3.5" />
       )}
-      {loading ? "导出中..." : "导出"}
+      {loading ? "导出中..." : "导出 PDF"}
     </Button>
   )
 }

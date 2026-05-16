@@ -128,3 +128,199 @@
     @apply font-sans;
   }
 }
+
+/* ─── Print / Export styles ───────────────────────────────────── */
+/*
+ * window.print() path — prints the live DOM #resume-preview.
+ *
+ * The editor page uses Tailwind print: variants to:
+ *   - Hide toolbar (print:hidden)
+ *   - Hide left sidebar (print:hidden)
+ *   - Hide ATS drawer (print:hidden)
+ *   - Release root flex constraints (print:block, print:overflow-visible)
+ *   - Remove wrapper padding (print:p-0)
+ *
+ * This @media print block handles page setup and fixes any
+ * remaining cross-browser print quirks.
+ */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  /* ── Preview: center on A4 page ──────────────────────────── */
+  #resume-preview {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-shadow: none !important;
+    background: white !important;
+    /* Ensure it doesn't exceed A4 width */
+    max-width: 210mm !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ── Containment: prevent any element from breaking out ──── */
+  #resume-preview {
+    overflow: hidden !important;
+    width: 210mm !important;
+    min-width: 0 !important;
+  }
+
+  #resume-preview * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ── Text wrapping for Chinese: normal = break at any char ──
+     keep-all was PREVENTING CJK line breaking entirely,
+     causing horizontal overflow.  normal restores default
+     break-anywhere behavior for Chinese text.
+     line-break: auto lets the browser use locale-appropriate
+     rules instead of Japanese strict mode. */
+  #resume-preview {
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-break: auto;
+  }
+
+
+  /* ── Semantic segment print styles ────────────────────── */
+  /* Flex bullet row: fixed bullet width (12px) + flex-1 content.
+     This guarantees second-line alignment and prevents
+     bullet from squeezing content width. */
+  #resume-preview .sembullet-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    max-width: 100% !important;
+    margin-bottom: 1px;
+  }
+
+  /* Bullet marker: fixed 12px, no shrink */
+  #resume-preview .sembullet-row > span:first-child {
+    width: 12px !important;
+    min-width: 12px !important;
+    flex-shrink: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Bullet content: takes remaining space */
+  #resume-preview .sembullet-row > span:last-child {
+    flex: 1 !important;
+    min-width: 0 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Bullet block: container for a group of related bullet rows */
+  #resume-preview .sembullet-block {
+    display: block;
+    margin-bottom: 3px;
+    max-width: 100%;
+  }
+
+  #resume-preview .semsection {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 3px;
+    orphans: 2;
+    widows: 2;
+    word-break: normal;
+  }
+
+  #resume-preview .semsection-label {
+    font-weight: 700;
+    color: #111827;
+    display: inline;
+  }
+
+  #resume-preview .semcat-header {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    font-weight: 700;
+    color: #1f2937;
+    orphans: 2;
+    widows: 2;
+    word-break: normal;
+  }
+
+  #resume-preview .semgap {
+    display: block;
+    height: 9px;
+  }
+
+  /* SemanticParagraph wrapper: full-width block */
+  #resume-preview .semantic-paragraph {
+    display: block;
+    max-width: 100%;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  /* ── Text alignment: left by default, justify where specified */
+  #resume-preview {
+    text-align: left;
+  }
+
+  #resume-preview .text-justify,
+  #resume-preview .text-justify * {
+    text-align: justify;
+  }
+
+  /* Override overflow-wrap:anywhere Tailwind utility.
+     "anywhere" breaks at any character, causing premature
+     mid-word cuts.  Replace with break-word. */
+  #resume-preview .overflow-wrap-anywhere,
+  #resume-preview [class*="overflow-wrap-anywhere"] {
+    overflow-wrap: break-word !important;
+  }
+
+  /* Flex children: prevent min-width:auto from blocking shrinkage */
+  #resume-preview .flex-1 {
+    min-width: 0 !important;
+    flex-basis: 0% !important;
+  }
+
+  /* Fixed-width elements must be allowed to shrink in A4 */
+  #resume-preview .shrink-0 {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* Tables and pre blocks */
+  #resume-preview table,
+  #resume-preview pre {
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Prevent any element from exceeding preview width */
+  #resume-preview img,
+  #resume-preview svg,
+  #resume-preview canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* ── Print quality ───────────────────────────────────────── */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #resume-preview * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+}

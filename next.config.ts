@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // mammoth uses native Node.js features for DOCX parsing
+  serverExternalPackages: ["mammoth"],
 };
 
 export default nextConfig;

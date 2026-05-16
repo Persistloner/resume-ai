@@ -1,4 +1,8 @@
 /**
+ * @deprecated Use buildPositioningPrompt from ./career-positioning instead.
+ * This file is kept for backward compatibility with eval test cases
+ * and as a fallback reference.
+ *
  * Resume Optimization Prompt System
  *
  * Design principle: Capability Mapping, not Fabrication.
@@ -8,7 +12,7 @@
 
 export interface OptimizeExperienceInput {
   company: string
-  position: string
+  role: string
   description: string
   targetJD?: string
 }
@@ -25,7 +29,7 @@ function buildUserMessage(input: OptimizeExperienceInput): string {
 
   parts.push("## 候选人原始经历")
   if (input.company) parts.push(`公司：${input.company}`)
-  if (input.position) parts.push(`职位：${input.position}`)
+  if (input.role) parts.push(`职位：${input.role}`)
   parts.push(`工作描述：${input.description}`)
 
   if (input.targetJD && input.targetJD.trim().length > 0) {
@@ -269,6 +273,71 @@ const SYSTEM_PROMPT = `# 角色
 
 你是一位诚实的简历顾问。你的工作是帮候选人把真实经历"说好"，而不是"说大"。如果候选人的经历和目标岗位之间有差距——那是正常的，不要试图通过编造来抹平差距。你的价值在于：让有限的真实经历，表达出最大的竞争力。`
 
+// ─── Skills Optimization ────────────────────────────────────────
+
+export interface OptimizeSkillInput {
+  title: string
+  description: string
+  targetJD?: string
+}
+
+function buildSkillUserMessage(input: OptimizeSkillInput): string {
+  const parts: string[] = []
+
+  parts.push("## 候选人原始技能")
+  parts.push(`技能方向：${input.title}`)
+  parts.push(`技能描述：${input.description}`)
+
+  if (input.targetJD && input.targetJD.trim().length > 0) {
+    parts.push("")
+    parts.push("## 目标岗位 JD")
+    parts.push(input.targetJD)
+  }
+
+  return parts.join("\n")
+}
+
+const SKILL_SYSTEM_PROMPT = `# 角色
+
+你是一位资深简历顾问。你的任务是帮助候选人将技能描述转化为更具岗位竞争力的职业化表达。
+
+核心信条：**宁可保守，绝不编造。**
+
+# 核心任务
+
+根据候选人提供的原始技能描述和（可选的）目标岗位 JD，优化该技能的表达方式。
+
+**当目标 JD 存在时：**
+1. 理解目标岗位需要什么能力
+2. 从候选人原始描述中找到与 JD 相关的真实经验
+3. 用岗位认可的职业语言重新表达这些真实经验
+
+**当目标 JD 不存在时：**
+1. 将技能描述提升为更专业、更清晰的职业化表达
+2. 保持克制——只提炼，不扩写
+
+# 输出风格要求
+
+1. **像真实求职者写的** — 自然、有细节、不模板化
+2. **具体而克制** — 用事实说话，不堆砌形容词
+3. **1-3 句话** — 简洁有力
+4. **禁止模板化表达**：
+   - 禁止"熟练掌握""精通""具备优秀的……""综合素质突出"
+   - 禁止"赋能""闭环""抓手""倒逼""沉淀""拉通""对齐""颗粒度""打法"
+5. **能力表达自然嵌入事实描述中** — 不单独罗列"我具备XX能力"
+6. **保留原文中的具体工具名、方法、场景** — 这是真实性的来源
+
+# 禁止的行为
+
+1. 编造原文中不存在的工具、技术、项目或成果
+2. 夸大能力级别（如把"用过"说成"精通"）
+3. 添加不存在的数据指标
+4. 使用 HR 软件生成的模板化语言
+
+# 输出格式
+
+直接返回优化后的技能描述文本。只返回 description，不要 title，不要任何前缀、解释或标注。`
+
 // ─── Public API ─────────────────────────────────────────────────
 
 export function buildOptimizeExperiencePrompt(
@@ -277,5 +346,14 @@ export function buildOptimizeExperiencePrompt(
   return {
     system: SYSTEM_PROMPT,
     user: buildUserMessage(input),
+  }
+}
+
+export function buildOptimizeSkillPrompt(
+  input: OptimizeSkillInput
+): OptimizePromptMessages {
+  return {
+    system: SKILL_SYSTEM_PROMPT,
+    user: buildSkillUserMessage(input),
   }
 }
