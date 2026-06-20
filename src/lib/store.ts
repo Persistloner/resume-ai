@@ -208,7 +208,16 @@ export const useResumeStore = create<ResumeStore>((set) => ({
 
   // Theme
   theme: DEFAULT_THEME,
-  setTheme: (theme) => set({ theme }),
+  setTheme: (theme) =>
+    set((state) => {
+      const migration: Record<string, TemplateId> = {
+        minimal: "classic",
+        business: "business",
+        tech: "tech",
+        creative: "creative",
+      }
+      return { theme, templateId: migration[theme] ?? state.templateId }
+    }),
 
   // Template (new system)
   templateId: DEFAULT_TEMPLATE_ID,
