@@ -54,7 +54,10 @@ export function ImportResumeDialog({ open, onOpenChange }: Props) {
           throw new Error(err.error || `服务器错误 ${res.status}`)
         }
 
-        const { resume } = await res.json()
+        const json = await res.json()
+        console.log("Import response:", json)
+
+        const resume = json.data
 
         if (!resume) {
           throw new Error("未能从文件中提取简历信息")
