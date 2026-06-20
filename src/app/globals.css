@@ -692,33 +692,6 @@
     height: auto !important;
   }
 
-  /* ── Sidebar template print fix ─────────────────────────── */
-  /* Prevent the dark sidebar from creating orphaned blocks
-     across page breaks. The sidebar is self-contained on the
-     first page; main content flows naturally across pages. */
-  [data-template="sidebar"] {
-    width: 210mm !important;
-    max-width: 210mm !important;
-    min-height: auto !important;
-  }
-
-  [data-template="sidebar"] .sidebar-layout {
-    display: grid !important;
-    grid-template-columns: 48mm 1fr !important;
-    width: 100% !important;
-    align-items: start !important;
-  }
-
-  [data-template="sidebar"] .sidebar-column {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-    min-height: 0 !important;
-  }
-
-  [data-template="sidebar"] .sidebar-main {
-    min-width: 0 !important;
-  }
-
   /* ── Print quality ───────────────────────────────────────── */
   * {
     -webkit-print-color-adjust: exact !important;

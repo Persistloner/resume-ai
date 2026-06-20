@@ -24,12 +24,16 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
   const contentIsLong = useMemo(() => totalItems > 5, [totalItems])
 
   return (
-    <div className="sidebar-layout">
+    <div
+      className="sidebar-layout"
+      style={{ display: "flex", flexDirection: "row", alignItems: "stretch" }}
+    >
       {/* ── Left Sidebar ─────────────────────────────────── */}
       <div
         className="sidebar-column"
         style={{
-          width: "48mm",
+          width: "45mm",
+          flex: "0 0 45mm",
           flexShrink: 0,
           backgroundColor: "#1e293b",
           color: "#ffffff",
