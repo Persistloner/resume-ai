@@ -86,24 +86,22 @@ async function printViaPopup(filename: string): Promise<void> {
             print-color-adjust: exact;
           }
           @media print {
-            @page { size: A4; margin: 0; }
+            @page { size: A4; margin: 10mm; }
             html, body { margin: 0; padding: 0; background: white; }
             /* Hide everything outside the preview */
             body > :not(#resume-preview-wrapper) { display: none !important; }
             #resume-preview-wrapper {
               display: block !important;
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
+              position: static !important;
               width: 100% !important;
             }
             #resume-preview {
               zoom: 1 !important;
               transform: none !important;
-              margin: 0 auto !important;
+              margin: 0 !important;
               box-shadow: none !important;
-              width: 210mm !important;
-              max-width: 210mm !important;
+              width: 190mm !important;
+              max-width: 190mm !important;
               min-width: 0 !important;
               box-sizing: border-box !important;
               background: white !important;
@@ -111,6 +109,7 @@ async function printViaPopup(filename: string): Promise<void> {
               word-break: normal;
               overflow-wrap: break-word;
               line-break: auto;
+              padding: 0 !important;
             }
 
             /* ── Containment: all children stay inside ──────── */
