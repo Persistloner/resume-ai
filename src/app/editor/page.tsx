@@ -8,7 +8,8 @@ import { ImportResumeDialog } from "@/components/import-resume-dialog"
 import { ATSPanel } from "@/components/ats-panel"
 import { SettingsDialog } from "@/components/settings-dialog"
 import { ThemeSwitcher } from "@/components/theme-switcher"
-import { Upload, PanelRightOpen, PanelRightClose } from "lucide-react"
+import { useResumeStore } from "@/lib/store"
+import { Upload, PanelRightOpen, PanelRightClose, Wrench } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type SectionId = "personal" | "work" | "project" | "education" | "skills"
@@ -30,6 +31,7 @@ const SECTION_ANCHORS: Record<SectionId, string> = {
 }
 
 export default function EditorPage() {
+  const openSettings = useResumeStore((s) => s.openSettings)
   const [importOpen, setImportOpen] = useState(false)
   const [atsOpen, setAtsOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionId | null>("personal")
@@ -74,6 +76,15 @@ export default function EditorPage() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={openSettings}
+            className="gap-1.5 text-xs h-8"
+          >
+            <Wrench className="size-3.5" />
+            <span className="hidden sm:inline">AI 设置</span>
+          </Button>
           <Button
             variant="ghost"
             size="sm"
