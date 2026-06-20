@@ -152,7 +152,10 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
                           maxWidth: "100%",
                           minWidth: 0,
                           display: "block",
-                        }}
+                          textAlign: "justify",
+                          textAlignLast: "left",
+                          textJustify: "inter-ideograph",
+                        } as unknown as React.CSSProperties}
                       >
                         {formatSkillText(text)}
                       </p>
