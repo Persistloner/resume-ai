@@ -34,7 +34,7 @@ function CardSection({
         borderRadius: "6px",
         padding: "10px",
         marginBottom: "10px",
-        breakInside: "avoid",
+        breakInside: "auto",
         ...style,
       }}
     >
@@ -66,6 +66,9 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
   return (
     <div
       style={{
+        width: "100%",
+        boxSizing: "border-box",
+        minHeight: "auto",
         paddingLeft: "22px",
         paddingRight: "22px",
         paddingTop: "24px",

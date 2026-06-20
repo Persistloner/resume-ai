@@ -710,6 +710,40 @@
     box-sizing: border-box !important;
   }
 
+  /* ── Tech template print fix ────────────────────────────── */
+  [data-template="tech"] {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: auto !important;
+  }
+
+  /* Reduce card visual weight in print to avoid "sawn-off" look */
+  [data-template="tech"] [style*="f8fafc"] {
+    background-color: transparent !important;
+  }
+
+  [data-template="tech"] [style*="f0f9ff"] {
+    background-color: transparent !important;
+  }
+
+  /* Keep section headings with their first item */
+  [data-template="tech"] h2 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Allow natural breaks inside card sections */
+  [data-template="tech"] [data-preview-anchor] {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  /* Keep individual items together */
+  [data-template="tech"] [data-preview-anchor] > div > div[style*="breakInside"] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
   /* ── Print quality ───────────────────────────────────────── */
   * {
     -webkit-print-color-adjust: exact !important;
