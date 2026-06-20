@@ -5,6 +5,7 @@ import { useResumeStore } from "@/lib/store"
 import { Eye, EyeOff } from "lucide-react"
 import { ClassicTemplate } from "@/components/templates/classic-template"
 import { SidebarTemplate } from "@/components/templates/sidebar-template"
+import { BusinessTemplate } from "@/components/templates/business-template"
 import type { TemplateId } from "@/lib/templates"
 import { THEME_TO_TEMPLATE } from "@/lib/templates"
 import type { ThemeId } from "@/lib/themes"
@@ -19,6 +20,8 @@ function renderTemplate(id: TemplateId, resume: Resume, showOptimized: boolean) 
   switch (id) {
     case "sidebar":
       return <SidebarTemplate resume={resume} showOptimized={showOptimized} />
+    case "business":
+      return <BusinessTemplate resume={resume} showOptimized={showOptimized} />
     default:
       return <ClassicTemplate resume={resume} showOptimized={showOptimized} />
   }
