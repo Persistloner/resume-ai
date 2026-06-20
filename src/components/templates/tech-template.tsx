@@ -16,10 +16,11 @@ function displayText(desc: string, optimized: string, showOptimized: boolean): s
   return safeDisplayText(optimized) || safeDisplayText(desc)
 }
 
-/** Split on sentence-ending punctuation for natural line breaks. Keeps all content. */
+/** Split on Chinese punctuation + English semicolons for natural line breaks.
+ *  Deliberately excludes "." to avoid breaking technical terms like Next.js, Node.js. */
 function formatSkillDescription(text: string): string[] {
   return text
-    .split(/(?<=[；;。.])/)
+    .split(/(?<=[；;。\n])/)
     .map((s) => s.trim())
     .filter(Boolean)
 }
