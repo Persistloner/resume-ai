@@ -4,13 +4,24 @@ import { useState, useEffect, useMemo } from "react"
 import { useResumeStore } from "@/lib/store"
 import { Eye, EyeOff } from "lucide-react"
 import { ClassicTemplate } from "@/components/templates/classic-template"
+import { SidebarTemplate } from "@/components/templates/sidebar-template"
 import type { TemplateId } from "@/lib/templates"
 import { THEME_TO_TEMPLATE } from "@/lib/templates"
 import type { ThemeId } from "@/lib/themes"
+import type { Resume } from "@/lib/types"
 
 function getEffectiveTemplateId(theme: ThemeId, templateId: TemplateId): TemplateId {
   if (templateId) return templateId
   return THEME_TO_TEMPLATE[theme] ?? "classic"
+}
+
+function renderTemplate(id: TemplateId, resume: Resume, showOptimized: boolean) {
+  switch (id) {
+    case "sidebar":
+      return <SidebarTemplate resume={resume} showOptimized={showOptimized} />
+    default:
+      return <ClassicTemplate resume={resume} showOptimized={showOptimized} />
+  }
 }
 
 export function ResumePreview() {
@@ -135,7 +146,7 @@ export function ResumePreview() {
           paddingBottom: "var(--resume-page-padding-y)",
         }}
       >
-        <ClassicTemplate resume={resume} showOptimized={showOptimized} />
+        {renderTemplate(effectiveTemplateId, resume, showOptimized)}
       </div>
     </div>
   )
