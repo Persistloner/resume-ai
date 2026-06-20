@@ -732,34 +732,56 @@
     background-color: transparent !important;
   }
 
-  /* ── TechTemplate print density ─────────────────────────── */
-  /* Light compression to reclaim ~8-12mm of vertical space */
+  /* ── TechTemplate: document-flow print layout ──────────── */
+  /* Shed the web card look; flow as clean document with blue accents */
+
   [data-template="tech"] {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding: 3mm 0 3mm 0 !important;
   }
 
-  /* Tighter card padding */
-  [data-template="tech"] [data-preview-anchor] {
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
+  /* Strip all card backgrounds, borders, radius, padding */
+  [data-template="tech"] [style*="f8fafc"],
+  [data-template="tech"] [style*="f0f9ff"],
+  [data-template="tech"] [style*="eff6ff"],
+  [data-template="tech"] [style*="bfdbfe"],
+  [data-template="tech"] [style*="bae6fd"] {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
     margin-bottom: 6px !important;
   }
 
-  /* Slightly tighter line-height on body text */
-  [data-template="tech"] p {
-    line-height: 1.5 !important;
+  /* Section content indentation (replaces card padding) */
+  [data-template="tech"] [data-preview-anchor] > div:not([class]) {
+    padding-left: 8px !important;
   }
 
-  /* Tighter heading margins */
+  /* Blue accent heading line preserved */
   [data-template="tech"] h2 {
+    border-bottom: 1.5px solid #2563eb !important;
     margin-bottom: 3px !important;
-    padding-bottom: 1px !important;
+    padding-bottom: 2px !important;
+    font-size: 0.82rem !important;
   }
 
-  /* Tighter item spacing */
+  /* Body text */
+  [data-template="tech"] p {
+    line-height: 1.45 !important;
+    margin-top: 1px !important;
+    margin-bottom: 1px !important;
+  }
+
+  /* Tighter item gaps */
   [data-template="tech"] [class*="space-y-"] {
-    gap: 0.35rem !important;
+    gap: 0.3rem !important;
+  }
+
+  /* Keep skill tag chips but smaller */
+  [data-template="tech"] [style*="eff6ff"][style*="display: inline-block"] {
+    font-size: 0.6rem !important;
+    padding: 1px 6px !important;
+    margin-bottom: 2px !important;
   }
 
   /* ── Print quality ───────────────────────────────────────── */
