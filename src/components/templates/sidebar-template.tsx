@@ -123,11 +123,11 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
             >
               核心能力
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {skills.map((skill) => {
                 const text = displayText(skill.description, skill.optimizedDescription, showOptimized)
                 return (
-                  <div key={skill.id}>
+                  <div key={skill.id} className="min-w-0 max-w-full">
                     <h4
                       className="font-semibold text-white"
                       style={{ fontSize: "0.68rem" }}
@@ -136,10 +136,17 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
                     </h4>
                     {text && (
                       <p
-                        className="text-slate-400 mt-0.5"
+                        className="text-slate-400 mt-0.5 min-w-0 max-w-full"
                         style={{
-                          fontSize: "0.56rem",
-                          lineHeight: "1.35",
+                          fontSize: "0.57rem",
+                          lineHeight: "1.5",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
+                          lineBreak: "auto",
+                          maxWidth: "100%",
+                          minWidth: 0,
+                          textAlign: "left",
                         }}
                       >
                         {safeDisplayText(text)}
