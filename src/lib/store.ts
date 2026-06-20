@@ -1,6 +1,10 @@
 import { create } from "zustand"
 import { Resume, WorkExperience, ProjectExperience, Education, Skill } from "./types"
 import type { PositioningMetadata, OptimizationHistoryEntry, AbilityCard } from "./types"
+import type { ThemeId } from "./themes"
+import { DEFAULT_THEME } from "./themes"
+import type { TemplateId } from "./templates"
+import { DEFAULT_TEMPLATE_ID } from "./templates"
 import { mockResume } from "./mock-data"
 import { v4 as uuid } from "uuid"
 
@@ -10,6 +14,19 @@ type Entity = WorkExperience | ProjectExperience | Skill
 
 interface ResumeStore {
   resume: Resume
+
+  // Settings dialog
+  settingsOpen: boolean
+  openSettings: () => void
+  closeSettings: () => void
+
+  // Theme (legacy — kept during migration)
+  theme: ThemeId
+  setTheme: (theme: ThemeId) => void
+
+  // Template (new system — coexists with theme during migration)
+  templateId: TemplateId
+  setTemplateId: (id: TemplateId) => void
 
   // Personal Info
   setPersonalInfo: (info: Partial<Resume["personalInfo"]>) => void
@@ -183,6 +200,19 @@ function setEntityArray(
 
 export const useResumeStore = create<ResumeStore>((set) => ({
   resume: { ...mockResume },
+
+  // Settings dialog
+  settingsOpen: false,
+  openSettings: () => set({ settingsOpen: true }),
+  closeSettings: () => set({ settingsOpen: false }),
+
+  // Theme
+  theme: DEFAULT_THEME,
+  setTheme: (theme) => set({ theme }),
+
+  // Template (new system)
+  templateId: DEFAULT_TEMPLATE_ID,
+  setTemplateId: (id) => set({ templateId: id }),
 
   optimizingId: null,
   setOptimizingId: (id) => set({ optimizingId: id }),
