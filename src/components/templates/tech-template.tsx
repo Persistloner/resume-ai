@@ -178,7 +178,7 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
             skills={skills}
             showOptimized={showOptimized}
             renderSkill={({ title, description }) => (
-              <>
+              <div style={{ marginBottom: "8px", minWidth: 0, maxWidth: "100%" }}>
                 <span
                   style={{
                     display: "inline-block",
@@ -189,15 +189,18 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
                     border: "1px solid #bfdbfe",
                     borderRadius: "4px",
                     padding: "1px 8px",
-                    marginBottom: "2px",
+                    marginBottom: "4px",
                   }}
                 >
                   {title}
                 </span>
                 {description && (
                   <p
-                    className="min-w-0 max-w-full"
                     style={{
+                      display: "block",
+                      width: "100%",
+                      maxWidth: "100%",
+                      minWidth: 0,
                       fontSize: "0.72rem",
                       lineHeight: "1.6",
                       color: "#475569",
@@ -205,17 +208,14 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
                       wordBreak: "break-word",
                       overflowWrap: "break-word",
                       lineBreak: "loose",
-                      maxWidth: "100%",
-                      minWidth: 0,
+                      margin: "2px 0 0 0",
                       paddingLeft: "8px",
-                      marginTop: "2px",
-                      marginBottom: "8px",
                     }}
                   >
                     {description}
                   </p>
                 )}
-              </>
+              </div>
             )}
           />
         </CardSection>
