@@ -3,6 +3,7 @@
 import { Mail, Phone, MapPin, Code } from "lucide-react"
 import { safeDisplayText } from "@/lib/safe-display-text"
 import { SemanticParagraph } from "@/components/semantic-paragraph"
+import { SkillsSection } from "@/components/templates/shared/skills-section"
 import type { Resume } from "@/lib/types"
 
 export interface TechTemplateProps {
@@ -13,28 +14,6 @@ export interface TechTemplateProps {
 function displayText(desc: string, optimized: string, showOptimized: boolean): string {
   if (!showOptimized) return safeDisplayText(desc)
   return safeDisplayText(optimized) || safeDisplayText(desc)
-}
-
-/** Skill tag chip with accent color */
-function SkillTag({ name }: { name: string }) {
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        fontSize: "0.65rem",
-        fontWeight: 600,
-        color: "#1e40af",
-        backgroundColor: "#eff6ff",
-        border: "1px solid #bfdbfe",
-        borderRadius: "4px",
-        padding: "2px 8px",
-        marginRight: "4px",
-        marginBottom: "4px",
-      }}
-    >
-      {name}
-    </span>
-  )
 }
 
 /** Card wrapper for sections */
@@ -186,17 +165,54 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
         </CardSection>
       )}
 
-      {/* ── Skills as tags ─────────────────────────────────── */}
+      {/* ── Skills ─────────────────────────────────────────── */}
       {skills.length > 0 && (
-        <CardSection
-          data-preview-anchor="preview-skills"
-        >
+        <CardSection data-preview-anchor="preview-skills">
           <SectionHeading>技术能力</SectionHeading>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0" }}>
-            {skills.map((skill) => (
-              <SkillTag key={skill.id} name={skill.title} />
-            ))}
-          </div>
+          <SkillsSection
+            skills={skills}
+            showOptimized={showOptimized}
+            renderSkill={({ title, description }) => (
+              <>
+                <span
+                  style={{
+                    display: "inline-block",
+                    fontSize: "0.65rem",
+                    fontWeight: 600,
+                    color: "#1e40af",
+                    backgroundColor: "#eff6ff",
+                    border: "1px solid #bfdbfe",
+                    borderRadius: "4px",
+                    padding: "1px 8px",
+                    marginBottom: "2px",
+                  }}
+                >
+                  {title}
+                </span>
+                {description && (
+                  <p
+                    className="min-w-0 max-w-full"
+                    style={{
+                      fontSize: "0.72rem",
+                      lineHeight: "1.6",
+                      color: "#475569",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                      lineBreak: "loose",
+                      maxWidth: "100%",
+                      minWidth: 0,
+                      paddingLeft: "8px",
+                      marginTop: "2px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {description}
+                  </p>
+                )}
+              </>
+            )}
+          />
         </CardSection>
       )}
 
