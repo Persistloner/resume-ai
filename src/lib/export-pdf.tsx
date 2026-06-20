@@ -105,7 +105,7 @@ async function printViaPopup(filename: string): Promise<void> {
               min-width: 0 !important;
               box-sizing: border-box !important;
               background: white !important;
-              overflow: hidden !important;
+              overflow: visible !important;
               word-break: normal;
               overflow-wrap: break-word;
               line-break: auto;

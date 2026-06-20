@@ -720,14 +720,7 @@
     page-break-after: avoid !important;
   }
 
-  /* Individual items (work exp, project, education, skill) stay together */
-  [data-template] [style*="breakInside: avoid"],
-  [data-template] [style*="breakInside:avoid"] {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Large containers (sections, cards) allow natural breaks */
+  /* Section containers: allow natural page breaks */
   [data-template] [data-preview-anchor] {
     break-inside: auto !important;
     page-break-inside: auto !important;

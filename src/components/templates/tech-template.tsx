@@ -253,7 +253,7 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
                     padding: "10px",
                     marginBottom: "6px",
                     borderLeft: "3px solid #2563eb",
-                    breakInside: "avoid",
+                    breakInside: "auto",
                   }}
                 >
                   <div className="flex justify-between items-baseline gap-2">
@@ -313,7 +313,7 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
                 showOptimized
               )
               return (
-                <div key={exp.id} style={{ breakInside: "avoid", marginBottom: "4px" }}>
+                <div key={exp.id} style={{ breakInside: "auto", marginBottom: "4px" }}>
                   <div className="flex justify-between items-baseline gap-2">
                     <h3
                       className="font-bold"
