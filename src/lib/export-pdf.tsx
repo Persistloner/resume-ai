@@ -58,6 +58,12 @@ async function printViaPopup(filename: string): Promise<void> {
       })
       .join("\n")
 
+    // Clone the preview and reset any on-screen zoom so the PDF
+    // renders at native 100% scale instead of appearing shrunk.
+    const clonedPreview = previewEl.cloneNode(true) as HTMLElement
+    clonedPreview.style.zoom = "1"
+    clonedPreview.style.transform = "none"
+
     const printWindow = window.open("", "_blank", "width=900,height=700")
     if (!printWindow) {
       reject(new Error("浏览器阻止了弹窗，请允许本站弹窗后重试"))
@@ -92,6 +98,8 @@ async function printViaPopup(filename: string): Promise<void> {
               width: 100% !important;
             }
             #resume-preview {
+              zoom: 1 !important;
+              transform: none !important;
               margin: 0 auto !important;
               box-shadow: none !important;
               width: 210mm !important;
@@ -160,7 +168,7 @@ async function printViaPopup(filename: string): Promise<void> {
             }
             #resume-preview .semsection-label {
               font-weight: 700;
-              color: #111827;
+              color: var(--resume-heading-color, #111827);
               display: inline;
             }
             #resume-preview .semcat-header {
@@ -168,7 +176,7 @@ async function printViaPopup(filename: string): Promise<void> {
               margin-top: 8px;
               margin-bottom: 2px;
               font-weight: 700;
-              color: #1f2937;
+              color: var(--resume-heading-color, #1f2937);
               orphans: 2;
               widows: 2;
               word-break: normal;
@@ -210,7 +218,7 @@ async function printViaPopup(filename: string): Promise<void> {
       </head>
       <body>
         <div id="resume-preview-wrapper">
-          ${previewEl.outerHTML}
+          ${clonedPreview.outerHTML}
         </div>
         <script>
           // ── Sentence-boundary break hints ────────────────────
