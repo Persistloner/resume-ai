@@ -16,6 +16,14 @@ function displayText(desc: string, optimized: string, showOptimized: boolean): s
   return safeDisplayText(optimized) || safeDisplayText(desc)
 }
 
+/** Split on sentence-ending punctuation for natural line breaks. Keeps all content. */
+function formatSkillDescription(text: string): string[] {
+  return text
+    .split(/(?<=[；;。.])/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
 /** Card wrapper for sections */
 function CardSection({
   children,
@@ -194,27 +202,29 @@ export function TechTemplate({ resume, showOptimized }: TechTemplateProps) {
                 >
                   {title}
                 </span>
-                {description && (
-                  <p
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      maxWidth: "100%",
-                      minWidth: 0,
-                      fontSize: "0.72rem",
-                      lineHeight: "1.6",
-                      color: "#475569",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                      overflowWrap: "break-word",
-                      lineBreak: "loose",
-                      margin: "2px 0 0 0",
-                      paddingLeft: "8px",
-                    }}
-                  >
-                    {description}
-                  </p>
-                )}
+                {description &&
+                  formatSkillDescription(description).map((line, i) => (
+                    <p
+                      key={i}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        maxWidth: "100%",
+                        minWidth: 0,
+                        fontSize: "0.72rem",
+                        lineHeight: "1.6",
+                        color: "#475569",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                        lineBreak: "loose",
+                        margin: "0 0 2px 0",
+                        paddingLeft: "8px",
+                      }}
+                    >
+                      {line}
+                    </p>
+                  ))}
               </div>
             )}
           />
