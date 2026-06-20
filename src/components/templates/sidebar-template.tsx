@@ -102,7 +102,7 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
           </div>
         </div>
 
-        {/* Skills — in sidebar */}
+        {/* Skills — titles only, no descriptions */}
         {skills.length > 0 && (
           <div>
             <h3
@@ -119,76 +119,15 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
             >
               专业技能
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {skills.map((skill) => (
-                <div key={skill.id}>
-                  <h4
-                    className="font-semibold text-white"
-                    style={{ fontSize: "0.66rem" }}
-                  >
-                    {skill.title}
-                  </h4>
-                  {showOptimized && skill.optimizedDescription ? (
-                    <p
-                      className="text-slate-400 leading-relaxed mt-0.5"
-                      style={{ fontSize: "0.58rem" }}
-                    >
-                      {safeDisplayText(skill.optimizedDescription)}
-                    </p>
-                  ) : skill.description ? (
-                    <p
-                      className="text-slate-400 leading-relaxed mt-0.5"
-                      style={{ fontSize: "0.58rem" }}
-                    >
-                      {safeDisplayText(skill.description)}
-                    </p>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Education — in sidebar */}
-        {education.length > 0 && (
-          <div>
-            <h3
-              className="font-semibold tracking-wide"
-              style={{
-                fontSize: "0.68rem",
-                textTransform: "uppercase",
-                color: "#94a3b8",
-                letterSpacing: "0.1em",
-                borderBottom: "1px solid rgba(148,163,184,0.3)",
-                paddingBottom: "3px",
-                marginBottom: "6px",
-              }}
-            >
-              教育背景
-            </h3>
-            <div className="space-y-2">
-              {education.map((edu) => (
-                <div key={edu.id}>
-                  <h4
-                    className="font-semibold text-white"
-                    style={{ fontSize: "0.66rem" }}
-                  >
-                    {edu.school || "学校名称"}
-                  </h4>
-                  <p
-                    className="text-slate-400 leading-relaxed mt-0.5"
-                    style={{ fontSize: "0.58rem" }}
-                  >
-                    {edu.degree}
-                    {edu.field && ` · ${edu.field}`}
-                  </p>
-                  <p
-                    className="text-slate-500 mt-0.5"
-                    style={{ fontSize: "0.56rem" }}
-                  >
-                    {edu.startDate} — {edu.endDate}
-                  </p>
-                </div>
+                <h4
+                  key={skill.id}
+                  className="font-semibold text-white"
+                  style={{ fontSize: "0.66rem" }}
+                >
+                  {skill.title}
+                </h4>
               ))}
             </div>
           </div>
@@ -411,6 +350,58 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
                 )
               })}
             </div>
+          </div>
+        )}
+
+        {/* Education */}
+        {education.length > 0 && (
+          <div
+            data-preview-anchor="preview-education"
+            style={{ marginBottom: "6px" }}
+          >
+            <h2
+              className="font-semibold tracking-wide"
+              style={{
+                fontSize: "0.76rem",
+                color: "#1e293b",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                borderBottom: "1.5px solid #e2e8f0",
+                paddingBottom: "2px",
+                marginBottom: "5px",
+              }}
+            >
+              教育背景
+            </h2>
+            {education.map((edu) => (
+              <div key={edu.id} style={{ breakInside: "avoid" }}>
+                <div className="flex justify-between items-baseline gap-2">
+                  <h3
+                    className="font-bold"
+                    style={{ fontSize: "0.76rem", color: "#334155" }}
+                  >
+                    {edu.school || "学校名称"}
+                  </h3>
+                  <span
+                    className="shrink-0 text-right"
+                    style={{ fontSize: "0.6rem", color: "#94a3b8" }}
+                  >
+                    {edu.startDate} — {edu.endDate}
+                  </span>
+                </div>
+                <p
+                  className="font-medium mt-0"
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "#475569",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  {edu.degree}
+                  {edu.field && ` · ${edu.field}`}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
