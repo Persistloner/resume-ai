@@ -20,12 +20,14 @@ function displayText(desc: string, optimized: string, showOptimized: boolean): s
 function CardSection({
   children,
   style,
+  ...rest
 }: {
   children: React.ReactNode
   style?: React.CSSProperties
 }) {
   return (
     <div
+      {...rest}
       style={{
         backgroundColor: "#f8fafc",
         border: "1px solid #bfdbfe",
