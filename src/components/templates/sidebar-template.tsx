@@ -16,6 +16,11 @@ function displayText(desc: string, optimized: string, showOptimized: boolean): s
   return safeDisplayText(optimized) || safeDisplayText(desc)
 }
 
+/** Insert newline after Chinese sentence-ending punctuation for natural line breaks. Keeps all content. */
+function formatSkillText(text: string): string {
+  return text.replace(/([；。])\s*/g, "$1\n")
+}
+
 export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps) {
   const { personalInfo, workExperience, projectExperience, education, skills } = resume
 
@@ -139,17 +144,17 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
                         className="text-slate-400 mt-0.5 min-w-0 max-w-full"
                         style={{
                           fontSize: "0.57rem",
-                          lineHeight: "1.5",
-                          whiteSpace: "normal",
+                          lineHeight: "1.6",
+                          whiteSpace: "pre-wrap",
                           wordBreak: "break-word",
-                          overflowWrap: "anywhere",
-                          lineBreak: "auto",
+                          overflowWrap: "break-word",
+                          lineBreak: "loose",
                           maxWidth: "100%",
                           minWidth: 0,
-                          textAlign: "left",
+                          display: "block",
                         }}
                       >
-                        {safeDisplayText(text)}
+                        {formatSkillText(text)}
                       </p>
                     )}
                   </div>
