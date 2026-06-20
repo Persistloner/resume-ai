@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server"
 import { buildAnalyzeJDPrompt } from "@/lib/ai/prompts/analyze-jd"
+import { createAICaller } from "@/lib/ai/ai-client"
+import { resolveAIConfig } from "@/lib/ai/config"
+import { getOrCreateSession } from "@/lib/auth/session"
+import { checkRateLimit } from "@/lib/rate-limit"
 
-const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
-const TEMPERATURE = 0.1
-const MAX_TOKENS = 1024
+export const maxDuration = 30
 
 function log(phase: string, details: Record<string, unknown> = {}) {
   console.log(
@@ -20,110 +22,99 @@ function cleanJsonText(text: string): string {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.DEEPSEEK_API_KEY
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "未配置 DEEPSEEK_API_KEY" },
-      { status: 500 }
-    )
-  }
-
-  const body = await request.json().catch(() => ({}))
-  const { targetJD, resumeSummary } = body as {
-    targetJD?: string
-    resumeSummary?: string
-  }
-
-  if (!targetJD || !targetJD.trim()) {
-    return NextResponse.json(
-      { error: "请先填写目标岗位 JD" },
-      { status: 400 }
-    )
-  }
-
-  if (!resumeSummary || !resumeSummary.trim()) {
-    return NextResponse.json(
-      { error: "请先完善简历内容" },
-      { status: 400 }
-    )
-  }
-
-  const { system, user } = buildAnalyzeJDPrompt({ targetJD, resumeSummary })
-
-  log("request-start", {
-    jdLen: targetJD.length,
-    resumeLen: resumeSummary.length,
-  })
-
   try {
-    const res = await fetch(DEEPSEEK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        temperature: TEMPERATURE,
-        max_tokens: MAX_TOKENS,
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ],
-      }),
-    })
+    const body = await request.json().catch(() => ({}))
+    const { targetJD, resumeSummary } = body as {
+      targetJD?: string
+      resumeSummary?: string
+    }
 
-    if (!res.ok) {
-      const errBody = await res.json().catch(() => ({}))
-      throw new Error(
-        (errBody as { error?: { message?: string } })?.error?.message ||
-          `DeepSeek API 返回 ${res.status}`
+    if (!targetJD || !targetJD.trim()) {
+      return NextResponse.json(
+        { error: "请先填写目标岗位 JD" },
+        { status: 400 }
       )
     }
 
-    const data = (await res.json()) as {
-      choices: Array<{ message: { content: string } }>
-      usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number }
+    if (!resumeSummary || !resumeSummary.trim()) {
+      return NextResponse.json(
+        { error: "请先完善简历内容" },
+        { status: 400 }
+      )
     }
 
-    const rawContent = data.choices?.[0]?.message?.content || ""
-    const jsonText = cleanJsonText(rawContent)
+    const userId = await getOrCreateSession()
+    const rateCheck = checkRateLimit(userId, "system")
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "请求过于频繁，请稍后重试" },
+        { status: 429 }
+      )
+    }
+
+    const config = resolveAIConfig(request.headers)
+    if (!config) {
+      return NextResponse.json(
+        { error: "未配置 AI API Key，请在设置中配置你的 API Key" },
+        { status: 402 }
+      )
+    }
+
+    const ai = createAICaller(config)
+    const { system, user } = buildAnalyzeJDPrompt({ targetJD, resumeSummary })
+
+    log("start", { jdLen: targetJD.length, resumeLen: resumeSummary.length })
+
+    const result = await ai.call({
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+      temperature: 0.1,
+      maxTokens: 1024,
+    })
+
+    const jsonText = cleanJsonText(result.content)
 
     log("response", {
-      rawLen: rawContent.length,
-      usage: data.usage,
+      rawLen: result.content.length,
+      tokensUsed: result.usage.totalTokens,
     })
 
     let parsed: Record<string, any>
     try {
       parsed = JSON.parse(jsonText)
     } catch {
-      log("parse-error", { preview: jsonText.slice(0, 200) })
       return NextResponse.json(
         { error: "AI 返回格式异常，请重试" },
-        { status: 500 }
+        { status: 502 }
       )
     }
 
     return NextResponse.json({
-      atsScore: Math.min(100, Math.max(0, Number(parsed.atsScore) || 0)),
-      jdKeywords: Array.isArray(parsed.jdKeywords) ? parsed.jdKeywords : [],
-      roleType: String(parsed.roleType ?? ""),
-      coreRequirements: Array.isArray(parsed.coreRequirements)
-        ? parsed.coreRequirements
+      atsScore: Number(parsed.atsScore ?? parsed.ats_score ?? 0),
+      jdKeywords: Array.isArray(parsed.jdKeywords ?? parsed.jd_keywords)
+        ? (parsed.jdKeywords ?? parsed.jd_keywords)
         : [],
-      matchedSkills: Array.isArray(parsed.matchedSkills)
-        ? parsed.matchedSkills
+      roleType: String(parsed.roleType ?? parsed.role_type ?? ""),
+      coreRequirements: Array.isArray(parsed.coreRequirements ?? parsed.core_requirements)
+        ? (parsed.coreRequirements ?? parsed.core_requirements)
         : [],
-      missingSkills: Array.isArray(parsed.missingSkills)
-        ? parsed.missingSkills
+      matchedSkills: Array.isArray(parsed.matchedSkills ?? parsed.matched_skills)
+        ? (parsed.matchedSkills ?? parsed.matched_skills)
         : [],
-      suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+      missingSkills: Array.isArray(parsed.missingSkills ?? parsed.missing_skills)
+        ? (parsed.missingSkills ?? parsed.missing_skills)
+        : [],
+      suggestions: Array.isArray(parsed.suggestions)
+        ? parsed.suggestions
+        : [],
     })
   } catch (error) {
-    log("error", { error: String(error) })
+    const err = error as Error
+    log("error", { message: err.message })
     return NextResponse.json(
-      { error: "ATS 分析失败，请重试" },
+      { error: err.message || "AI 分析失败，请重试" },
       { status: 500 }
     )
   }

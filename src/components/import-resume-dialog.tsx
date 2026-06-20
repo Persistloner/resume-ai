@@ -13,6 +13,7 @@ import {
 import { useResumeStore } from "@/lib/store"
 import { toast } from "sonner"
 import { Upload, FileText, Loader2 } from "lucide-react"
+import { getAIRequestHeaders } from "@/lib/api-key-store"
 
 const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
 
@@ -46,6 +47,7 @@ export function ImportResumeDialog({ open, onOpenChange }: Props) {
 
         const res = await fetch("/api/resume/parse", {
           method: "POST",
+          headers: { ...getAIRequestHeaders() },
           body: formData,
         })
 

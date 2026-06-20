@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { useResumeStore } from "@/lib/store"
 import { X, Sparkles, Undo2, RotateCcw } from "lucide-react"
 import { toast } from "sonner"
+import { getAIRequestHeaders } from "@/lib/api-key-store"
 
 interface SkillCardProps {
   skillId: string
@@ -38,7 +39,7 @@ export function SkillCard({ skillId }: SkillCardProps) {
     try {
       const res = await fetch("/api/optimize", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAIRequestHeaders() },
         body: JSON.stringify({
           type: "skill",
           title: skill.title,
@@ -48,7 +49,12 @@ export function SkillCard({ skillId }: SkillCardProps) {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "分析失败")
+      if (!res.ok) {
+        if (data.code === "QUOTA_EXHAUSTED") {
+          useResumeStore.getState().openSettings()
+        }
+        throw new Error(data.message || data.error || "分析失败")
+      }
 
       optimizeSkillStore(skillId, data.optimizedText, {
         rolePersona: data.rolePersona || "",

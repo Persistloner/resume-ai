@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useResumeStore } from "@/lib/store"
 import { Plus, Trash2, Sparkles, Undo2, RotateCcw } from "lucide-react"
 import { toast } from "sonner"
+import { getAIRequestHeaders } from "@/lib/api-key-store"
 
 export function ProjectExperienceForm() {
   const projectExperience = useResumeStore((s) => s.resume.projectExperience)
@@ -29,11 +30,16 @@ export function ProjectExperienceForm() {
     try {
       const res = await fetch("/api/optimize", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAIRequestHeaders() },
         body: JSON.stringify({ type: "project", company: name, role, description, targetJD }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "分析失败")
+      if (!res.ok) {
+        if (data.code === "QUOTA_EXHAUSTED") {
+          useResumeStore.getState().openSettings()
+        }
+        throw new Error(data.message || data.error || "分析失败")
+      }
       setPositioningResult("project", id, data.optimizedText, {
         rolePersona: data.rolePersona || "",
         transferableSkills: data.transferableSkills || [],

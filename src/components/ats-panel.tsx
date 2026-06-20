@@ -17,6 +17,7 @@ import {
   RefreshCw,
 } from "lucide-react"
 import { toast } from "sonner"
+import { getAIRequestHeaders } from "@/lib/api-key-store"
 
 // --- Score Ring --------------------------------------------------------
 
@@ -119,14 +120,17 @@ export function ATSPanel() {
     try {
       const res = await fetch("/api/analyze-jd", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAIRequestHeaders() },
         body: JSON.stringify({ targetJD, resumeSummary }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || "分析失败")
+        if (data.code === "QUOTA_EXHAUSTED") {
+          useResumeStore.getState().openSettings()
+        }
+        throw new Error(data.message || data.error || "分析失败")
       }
 
       setATSAnalysis(data)

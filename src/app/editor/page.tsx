@@ -6,6 +6,8 @@ import { ResumePreview } from "@/components/resume-preview"
 import { ExportPDFButton } from "@/components/export-pdf-button"
 import { ImportResumeDialog } from "@/components/import-resume-dialog"
 import { ATSPanel } from "@/components/ats-panel"
+import { SettingsDialog } from "@/components/settings-dialog"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Upload, PanelRightOpen, PanelRightClose } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -71,6 +73,7 @@ export default function EditorPage() {
           <span className="text-xs text-muted-foreground/60 hidden sm:inline">— 实时预览</span>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           <Button
             variant="ghost"
             size="sm"
@@ -172,6 +175,7 @@ export default function EditorPage() {
       )}
 
       <ImportResumeDialog open={importOpen} onOpenChange={setImportOpen} />
+      <SettingsDialog />
     </div>
   )
 }
