@@ -129,6 +129,387 @@
   }
 }
 
+/* ─── Resume Theme System ──────────────────────────────────────────
+ *
+ * Complete design system controlling: color tokens, typography scale,
+ * spacing system, density, layout mode, component styles.
+ *
+ * Each theme defines 35+ CSS custom properties across 5 categories.
+ * Structural layout rules use [data-theme] selectors with .resume-*
+ * semantic classes, enabling fundamentally different visual layouts.
+ *
+ * PDF: popup clones global stylesheets + DOM with data-theme attribute
+ * so all theme styles and layout rules apply identically to print.
+ */
+
+/* ═════════════════════════════════════════════════════════════════
+   THEME: Minimal (default)
+   Airy layout, generous whitespace, thin light borders, soft grays
+   ═════════════════════════════════════════════════════════════════ */
+[data-theme="minimal"] {
+  /* ── Colors ───────────────────────────────────────────── */
+  --resume-heading-color: #374151;
+  --resume-subheading-color: #1f2937;
+  --resume-text-color: #4b5563;
+  --resume-muted-color: #9ca3af;
+  --resume-accent-color: #6b7280;
+  --resume-border-color: #e5e7eb;
+  --resume-surface-bg: transparent;
+  --resume-name-color: #111827;
+
+  /* ── Typography scale ─────────────────────────────────── */
+  --resume-name-size: 1.25rem;
+  --resume-name-weight: 700;
+  --resume-title-size: 0.8125rem;
+  --resume-title-weight: 600;
+  --resume-section-heading-size: 0.875rem;
+  --resume-section-heading-weight: 600;
+  --resume-section-heading-transform: uppercase;
+  --resume-section-heading-tracking: 0.05em;
+  --resume-item-heading-size: 0.8125rem;
+  --resume-item-heading-weight: 700;
+  --resume-body-size: 0.75rem;
+  --resume-meta-size: 0.59375rem;
+
+  /* ── Spacing system ───────────────────────────────────── */
+  --resume-page-padding-x: 24px;
+  --resume-page-padding-y: 30px;
+  --resume-section-gap: 12px;
+  --resume-item-gap: 6px;
+  --resume-heading-to-content: 2px;
+  --resume-content-indent: 16px;
+  --resume-header-to-summary: 10px;
+  --resume-contact-gap: 6px;
+  --resume-photo-size: 60px;
+
+  /* ── Borders & dividers ──────────────────────────────────*/
+  --resume-divider-width: 1px;
+  --resume-divider-style: solid;
+  --resume-divider-bottom-space: 2px;
+  --resume-skill-accent-width: 2px;
+
+  /* ── Layout/density ──────────────────────────────────────*/
+  --resume-date-col-width: 110px;
+  --resume-section-bg: transparent;
+  --resume-section-border: none;
+  --resume-section-radius: 0;
+  --resume-section-padding: 0;
+  --resume-skill-card-bg: transparent;
+  --resume-skill-card-border: none;
+  --resume-skill-card-radius: 0;
+  --resume-skill-card-padding: 0;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   THEME: Business
+   Compact density, strong hierarchy, thick dark borders, serif feel
+   ═════════════════════════════════════════════════════════════════ */
+[data-theme="business"] {
+  --resume-heading-color: #1a1a1a;
+  --resume-subheading-color: #1f2937;
+  --resume-text-color: #333333;
+  --resume-muted-color: #666666;
+  --resume-accent-color: #2c2c2c;
+  --resume-border-color: #333333;
+  --resume-surface-bg: transparent;
+  --resume-name-color: #0a0a0a;
+
+  --resume-name-size: 1.25rem;
+  --resume-name-weight: 800;
+  --resume-title-size: 0.8125rem;
+  --resume-title-weight: 700;
+  --resume-section-heading-size: 0.9375rem;
+  --resume-section-heading-weight: 700;
+  --resume-section-heading-transform: uppercase;
+  --resume-section-heading-tracking: 0.08em;
+  --resume-item-heading-size: 0.8125rem;
+  --resume-item-heading-weight: 700;
+  --resume-body-size: 0.8125rem;
+  --resume-meta-size: 0.59375rem;
+
+  --resume-page-padding-x: 22px;
+  --resume-page-padding-y: 24px;
+  --resume-section-gap: 8px;
+  --resume-item-gap: 3px;
+  --resume-heading-to-content: 1px;
+  --resume-content-indent: 14px;
+  --resume-header-to-summary: 8px;
+  --resume-contact-gap: 4px;
+  --resume-photo-size: 64px;
+
+  --resume-divider-width: 2px;
+  --resume-divider-style: solid;
+  --resume-divider-bottom-space: 1px;
+  --resume-skill-accent-width: 3px;
+
+  --resume-date-col-width: 110px;
+  --resume-section-bg: transparent;
+  --resume-section-border: none;
+  --resume-section-radius: 0;
+  --resume-section-padding: 0;
+  --resume-skill-card-bg: transparent;
+  --resume-skill-card-border: none;
+  --resume-skill-card-radius: 0;
+  --resume-skill-card-padding: 0;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   THEME: Tech
+   Card-based sections, blue accent, modern modular feel
+   ═════════════════════════════════════════════════════════════════ */
+[data-theme="tech"] {
+  --resume-heading-color: #1e3a5f;
+  --resume-subheading-color: #1e40af;
+  --resume-text-color: #334155;
+  --resume-muted-color: #64748b;
+  --resume-accent-color: #2563eb;
+  --resume-border-color: #bfdbfe;
+  --resume-surface-bg: #f8fafc;
+  --resume-name-color: #0f172a;
+
+  --resume-name-size: 1.25rem;
+  --resume-name-weight: 700;
+  --resume-title-size: 0.8125rem;
+  --resume-title-weight: 600;
+  --resume-section-heading-size: 0.9375rem;
+  --resume-section-heading-weight: 700;
+  --resume-section-heading-transform: none;
+  --resume-section-heading-tracking: 0.02em;
+  --resume-item-heading-size: 0.8125rem;
+  --resume-item-heading-weight: 700;
+  --resume-body-size: 0.8125rem;
+  --resume-meta-size: 0.59375rem;
+
+  --resume-page-padding-x: 22px;
+  --resume-page-padding-y: 26px;
+  --resume-section-gap: 10px;
+  --resume-item-gap: 6px;
+  --resume-heading-to-content: 4px;
+  --resume-content-indent: 14px;
+  --resume-header-to-summary: 10px;
+  --resume-contact-gap: 6px;
+  --resume-photo-size: 60px;
+
+  --resume-divider-width: 1.5px;
+  --resume-divider-style: solid;
+  --resume-divider-bottom-space: 2px;
+  --resume-skill-accent-width: 3px;
+
+  --resume-date-col-width: 105px;
+  --resume-section-bg: var(--resume-surface-bg);
+  --resume-section-border: 1px solid var(--resume-border-color);
+  --resume-section-radius: 6px;
+  --resume-section-padding: 10px;
+  --resume-skill-card-bg: #eff6ff;
+  --resume-skill-card-border: 1px solid #bfdbfe;
+  --resume-skill-card-radius: 6px;
+  --resume-skill-card-padding: 8px;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   THEME: Creative
+   Spacious layout, accent bar emphasis, vibrant purple/pink palette
+   ═════════════════════════════════════════════════════════════════ */
+[data-theme="creative"] {
+  --resume-heading-color: #7c3aed;
+  --resume-subheading-color: #4c1d95;
+  --resume-text-color: #3f3f46;
+  --resume-muted-color: #a1a1aa;
+  --resume-accent-color: #db2777;
+  --resume-border-color: #e9d5ff;
+  --resume-surface-bg: transparent;
+  --resume-name-color: #4c1d95;
+
+  --resume-name-size: 1.375rem;
+  --resume-name-weight: 700;
+  --resume-title-size: 0.8125rem;
+  --resume-title-weight: 600;
+  --resume-section-heading-size: 1rem;
+  --resume-section-heading-weight: 700;
+  --resume-section-heading-transform: uppercase;
+  --resume-section-heading-tracking: 0.06em;
+  --resume-item-heading-size: 0.8125rem;
+  --resume-item-heading-weight: 700;
+  --resume-body-size: 0.8125rem;
+  --resume-meta-size: 0.59375rem;
+
+  --resume-page-padding-x: 24px;
+  --resume-page-padding-y: 30px;
+  --resume-section-gap: 14px;
+  --resume-item-gap: 8px;
+  --resume-heading-to-content: 4px;
+  --resume-content-indent: 16px;
+  --resume-header-to-summary: 12px;
+  --resume-contact-gap: 6px;
+  --resume-photo-size: 64px;
+
+  --resume-divider-width: 1.5px;
+  --resume-divider-style: solid;
+  --resume-divider-bottom-space: 3px;
+  --resume-skill-accent-width: 3px;
+
+  --resume-date-col-width: 100px;
+  --resume-section-bg: transparent;
+  --resume-section-border: none;
+  --resume-section-radius: 0;
+  --resume-section-padding: 0;
+  --resume-skill-card-bg: transparent;
+  --resume-skill-card-border: none;
+  --resume-skill-card-radius: 0;
+  --resume-skill-card-padding: 0;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   STRUCTURAL LAYOUT RULES
+   Theme-specific overrides that go beyond tokens — these change
+   the actual visual structure (card wrappers, accent bars, etc.)
+   ═════════════════════════════════════════════════════════════════ */
+
+/* ── Base resume section (shared) ─────────────────────────── */
+.resume-section {
+  background: var(--resume-section-bg);
+  border: var(--resume-section-border);
+  border-radius: var(--resume-section-radius);
+  padding: var(--resume-section-padding);
+  margin-bottom: var(--resume-section-gap);
+}
+
+/* ── Section heading base (shared) ────────────────────────── */
+.resume-section-heading {
+  font-size: var(--resume-section-heading-size);
+  font-weight: var(--resume-section-heading-weight);
+  text-transform: var(--resume-section-heading-transform);
+  letter-spacing: var(--resume-section-heading-tracking);
+  color: var(--resume-heading-color);
+  padding-bottom: var(--resume-divider-bottom-space);
+  border-bottom-width: var(--resume-divider-width);
+  border-bottom-style: var(--resume-divider-style);
+  border-bottom-color: var(--resume-divider-color, var(--resume-border-color));
+  margin-bottom: var(--resume-heading-to-content);
+}
+
+/* Tech: section heading uses accent color instead of border */
+[data-theme="tech"] .resume-section-heading {
+  color: var(--resume-heading-color);
+  border-bottom-color: var(--resume-accent-color);
+}
+
+/* Creative: accent left bar, no bottom border */
+[data-theme="creative"] .resume-section-heading {
+  border-bottom: none;
+  border-left: 3px solid var(--resume-accent-color);
+  padding-left: 10px;
+  padding-bottom: 0;
+  color: var(--resume-heading-color);
+}
+
+/* ── Item card (work/project/education row) ──────────────── */
+.resume-item {
+  margin-bottom: var(--resume-item-gap);
+  break-inside: avoid;
+}
+
+/* Tech: item cards get a subtle background */
+[data-theme="tech"] .resume-item {
+  background: var(--resume-surface-bg);
+  border: 1px solid var(--resume-border-color);
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: var(--resume-item-gap);
+}
+
+/* ── Skill card ──────────────────────────────────────────── */
+.resume-skill-card {
+  background: var(--resume-skill-card-bg);
+  border: var(--resume-skill-card-border);
+  border-radius: var(--resume-skill-card-radius);
+  padding: var(--resume-skill-card-padding);
+}
+
+/* Creative: accent left bar for skills */
+[data-theme="creative"] .resume-skill-card {
+  border-left: var(--resume-skill-accent-width) solid var(--resume-accent-color);
+  padding-left: 10px;
+}
+
+/* ── Skill ability-card section ───────────────────────────── */
+.resume-ability-cards {
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left-width: var(--resume-skill-accent-width);
+  border-left-style: solid;
+  border-left-color: var(--resume-accent-color);
+}
+
+/* Tech: ability cards inherit card style */
+[data-theme="tech"] .resume-ability-cards {
+  opacity: 1;
+  border-left-color: var(--resume-accent-color);
+  background: transparent;
+}
+
+[data-theme="creative"] .resume-ability-cards {
+  border-left-color: var(--resume-accent-color);
+  opacity: 0.6;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.resume-header {
+  margin-bottom: var(--resume-header-to-summary);
+}
+
+.resume-name {
+  font-size: var(--resume-name-size);
+  font-weight: var(--resume-name-weight);
+  color: var(--resume-name-color);
+  letter-spacing: 0.025em;
+}
+
+.resume-title {
+  font-size: var(--resume-title-size);
+  font-weight: var(--resume-title-weight);
+  color: var(--resume-subheading-color);
+}
+
+.resume-contact {
+  font-size: var(--resume-meta-size);
+  color: var(--resume-muted-color);
+  gap: var(--resume-contact-gap);
+}
+
+.resume-photo {
+  width: var(--resume-photo-size);
+  height: calc(var(--resume-photo-size) * 1.27);
+}
+
+/* ── Item date column ────────────────────────────────────── */
+.resume-item-date {
+  font-size: var(--resume-meta-size);
+  color: var(--resume-muted-color);
+  text-align: right;
+  flex-shrink: 0;
+  width: var(--resume-date-col-width);
+}
+
+/* Tech: dates are less prominent */
+[data-theme="tech"] .resume-item-date {
+  color: var(--resume-accent-color);
+}
+
+/* ── Item content indent ─────────────────────────────────── */
+.resume-item-content {
+  padding-left: var(--resume-content-indent);
+  font-size: var(--resume-body-size);
+  color: var(--resume-text-color);
+}
+
+/* ── Education degree line ───────────────────────────────── */
+.resume-edu-detail {
+  font-size: var(--resume-body-size);
+  color: var(--resume-text-color);
+  padding-left: var(--resume-content-indent);
+}
+
 /* ─── Print / Export styles ───────────────────────────────────── */
 /*
  * window.print() path — prints the live DOM #resume-preview.
@@ -309,6 +690,33 @@
   #resume-preview canvas {
     max-width: 100% !important;
     height: auto !important;
+  }
+
+  /* ── Sidebar template print fix ─────────────────────────── */
+  /* Prevent the dark sidebar from creating orphaned blocks
+     across page breaks. The sidebar is self-contained on the
+     first page; main content flows naturally across pages. */
+  [data-template="sidebar"] {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: auto !important;
+  }
+
+  [data-template="sidebar"] .sidebar-layout {
+    display: grid !important;
+    grid-template-columns: 48mm 1fr !important;
+    width: 100% !important;
+    align-items: start !important;
+  }
+
+  [data-template="sidebar"] .sidebar-column {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    min-height: 0 !important;
+  }
+
+  [data-template="sidebar"] .sidebar-main {
+    min-width: 0 !important;
   }
 
   /* ── Print quality ───────────────────────────────────────── */
