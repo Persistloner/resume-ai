@@ -106,7 +106,7 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
           </div>
         </div>
 
-        {/* Skills index — titles only */}
+        {/* Skills — compact title + description in sidebar */}
         {skills.length > 0 && (
           <div>
             <h3
@@ -123,16 +123,31 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
             >
               核心能力
             </h3>
-            <div className="space-y-1.5">
-              {skills.map((skill) => (
-                <h4
-                  key={skill.id}
-                  className="font-semibold text-white"
-                  style={{ fontSize: "0.68rem" }}
-                >
-                  {skill.title}
-                </h4>
-              ))}
+            <div className="space-y-2">
+              {skills.map((skill) => {
+                const text = displayText(skill.description, skill.optimizedDescription, showOptimized)
+                return (
+                  <div key={skill.id}>
+                    <h4
+                      className="font-semibold text-white"
+                      style={{ fontSize: "0.68rem" }}
+                    >
+                      {skill.title}
+                    </h4>
+                    {text && (
+                      <p
+                        className="text-slate-400 mt-0.5"
+                        style={{
+                          fontSize: "0.56rem",
+                          lineHeight: "1.35",
+                        }}
+                      >
+                        {safeDisplayText(text)}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
@@ -360,49 +375,6 @@ export function SidebarTemplate({ resume, showOptimized }: SidebarTemplateProps)
                 </p>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Skills — full descriptions in main */}
-        {skills.length > 0 && (
-          <div data-preview-anchor="preview-skills" style={{ marginBottom: "4px" }}>
-            <h2
-              className="font-semibold tracking-wide"
-              style={{
-                fontSize: "0.78rem",
-                color: "#1e293b",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                borderBottom: "1.5px solid #e2e8f0",
-                paddingBottom: "2px",
-                marginBottom: "4px",
-              }}
-            >
-              核心能力
-            </h2>
-            <div className="space-y-2">
-              {skills.map((skill) => {
-                const text = displayText(skill.description, skill.optimizedDescription, showOptimized)
-                return (
-                  <div key={skill.id} style={{ breakInside: "avoid" }}>
-                    <h3
-                      className="font-bold"
-                      style={{ fontSize: "0.78rem", color: "#334155" }}
-                    >
-                      {skill.title}
-                    </h3>
-                    {text && (
-                      <div
-                        className="text-justify mt-0.5 leading-relaxed"
-                        style={{ fontSize: "0.75rem", color: "#475569", paddingLeft: "10px" }}
-                      >
-                        <SemanticParagraph text={text} sizeClass="text-[0.75rem]" />
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
           </div>
         )}
       </div>
