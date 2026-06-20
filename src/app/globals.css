@@ -692,6 +692,24 @@
     height: auto !important;
   }
 
+  /* ── Sidebar template print fix ─────────────────────────── */
+  [data-template="sidebar"] {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  [data-template="sidebar"] .sidebar-layout {
+    width: 100% !important;
+  }
+
+  [data-template="sidebar"] .sidebar-column,
+  [data-template="sidebar"] .sidebar-main {
+    box-sizing: border-box !important;
+  }
+
   /* ── Print quality ───────────────────────────────────────── */
   * {
     -webkit-print-color-adjust: exact !important;
