@@ -732,6 +732,36 @@
     background-color: transparent !important;
   }
 
+  /* ── TechTemplate print density ─────────────────────────── */
+  /* Light compression to reclaim ~8-12mm of vertical space */
+  [data-template="tech"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Tighter card padding */
+  [data-template="tech"] [data-preview-anchor] {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Slightly tighter line-height on body text */
+  [data-template="tech"] p {
+    line-height: 1.5 !important;
+  }
+
+  /* Tighter heading margins */
+  [data-template="tech"] h2 {
+    margin-bottom: 3px !important;
+    padding-bottom: 1px !important;
+  }
+
+  /* Tighter item spacing */
+  [data-template="tech"] [class*="space-y-"] {
+    gap: 0.35rem !important;
+  }
+
   /* ── Print quality ───────────────────────────────────────── */
   * {
     -webkit-print-color-adjust: exact !important;
