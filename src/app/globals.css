@@ -715,6 +715,29 @@
     width: 210mm !important;
     max-width: 210mm !important;
     min-height: auto !important;
+    margin: 0 !important;
+    padding: 10mm 10mm 10mm 10mm !important;
+    box-sizing: border-box !important;
+  }
+
+  /* All sections and cards fill the full 190mm print width */
+  [data-template="tech"] > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  [data-template="tech"] [data-preview-anchor],
+  [data-template="tech"] [style*="card"],
+  [data-template="tech"] [style*="f8fafc"],
+  [data-template="tech"] [style*="bfdbfe"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   /* Reduce card visual weight in print to avoid "sawn-off" look */
