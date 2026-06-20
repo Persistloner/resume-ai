@@ -8,58 +8,81 @@ export interface AIConfig {
   model: string
 }
 
-const PRESETS = {
+// ─── Provider Definitions ──────────────────────────────────────────────
+
+export interface ProviderDef {
+  label: string
+  baseUrl: string
+  defaultModel: string
+  models: string[]
+}
+
+export const PROVIDERS: Record<string, ProviderDef> = {
   deepseek: {
+    label: "DeepSeek",
     baseUrl: "https://api.deepseek.com/v1",
-    model: "deepseek-chat",
+    defaultModel: "deepseek-chat",
+    models: ["deepseek-chat", "deepseek-reasoner"],
   },
   openrouter: {
+    label: "OpenRouter",
     baseUrl: "https://openrouter.ai/api/v1",
-    model: "openrouter/auto",
+    defaultModel: "anthropic/claude-sonnet-4",
+    models: [
+      "anthropic/claude-sonnet-4",
+      "openai/gpt-4o-mini",
+      "google/gemini-2.5-flash",
+      "deepseek/deepseek-chat",
+      "qwen/qwen-2.5-72b-instruct",
+    ],
   },
-} as const
+  openai: {
+    label: "OpenAI",
+    baseUrl: "https://api.openai.com/v1",
+    defaultModel: "gpt-4o-mini",
+    models: ["gpt-4o-mini", "gpt-4o"],
+  },
+}
 
-export type PresetId = keyof typeof PRESETS
+// ─── Storage ───────────────────────────────────────────────────────────
 
-/** Load AI config from localStorage. Returns null if not configured. */
 export function loadAIConfig(): AIConfig | null {
   if (typeof window === "undefined") return null
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    if (parsed.apiKey && parsed.baseUrl && parsed.model) {
-      return parsed
-    }
+    if (parsed.apiKey && parsed.baseUrl && parsed.model) return parsed
   } catch {
-    // Corrupted storage
+    /* corrupted */
   }
   return null
 }
 
-/** Save AI config to localStorage. */
 export function saveAIConfig(config: AIConfig): void {
   if (typeof window === "undefined") return
   localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
 }
 
-/** Remove AI config from localStorage. */
 export function clearAIConfig(): void {
   if (typeof window === "undefined") return
   localStorage.removeItem(STORAGE_KEY)
 }
 
-/** Check if user has configured their own API key. */
 export function hasAIConfig(): boolean {
   return loadAIConfig() !== null
 }
 
-/** Returns all available preset configurations. */
-export function getPresets(): Record<PresetId, { baseUrl: string; model: string }> {
-  return PRESETS
+// ─── Mask ──────────────────────────────────────────────────────────────
+
+/** Show only first 3 + last 4 chars of an API key. */
+export function maskApiKey(key: string): string {
+  if (key.length <= 10) return "****"
+  return key.slice(0, 5) + "****" + key.slice(-4)
 }
 
-/** Headers to attach to AI API requests if user has configured their key. */
+// ─── Request Headers ───────────────────────────────────────────────────
+
 export function getAIRequestHeaders(): Record<string, string> | null {
   const config = loadAIConfig()
   if (!config) return null

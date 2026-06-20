@@ -12,88 +12,97 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { Key, Eye, EyeOff, Trash2, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react"
-import { loadAIConfig, saveAIConfig, clearAIConfig, getPresets, type PresetId } from "@/lib/api-key-store"
-
-const PRESETS = getPresets()
+import { Key, Eye, EyeOff, Trash2, CheckCircle2, AlertTriangle, Loader2, ExternalLink, ChevronDown } from "lucide-react"
+import {
+  loadAIConfig, saveAIConfig, clearAIConfig, hasAIConfig,
+  maskApiKey, PROVIDERS, type AIConfig,
+} from "@/lib/api-key-store"
 
 export function SettingsDialog() {
   const settingsOpen = useResumeStore((s) => s.settingsOpen)
   const closeSettings = useResumeStore((s) => s.closeSettings)
 
+  const [provider, setProvider] = useState("deepseek")
   const [apiKey, setApiKey] = useState("")
-  const [baseUrl, setBaseUrl] = useState("")
   const [model, setModel] = useState("")
   const [showKey, setShowKey] = useState(false)
+  const [advanceOpen, setAdvanceOpen] = useState(false)
+  const [customBaseUrl, setCustomBaseUrl] = useState("")
+  const [customModel, setCustomModel] = useState("")
   const [configured, setConfigured] = useState(false)
   const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null)
   const [testing, setTesting] = useState(false)
 
-  // Load existing config when dialog opens
+  // Sync base URL + model when provider changes
+  const providerDef = PROVIDERS[provider]
+
+  const effectiveBaseUrl = customBaseUrl || providerDef.baseUrl
+  const effectiveModel = customModel || model || providerDef.defaultModel
+
+  // Load existing config
   useEffect(() => {
     if (settingsOpen) {
       const config = loadAIConfig()
       if (config) {
         setApiKey(config.apiKey)
-        setBaseUrl(config.baseUrl)
         setModel(config.model)
+        // Try to detect provider from base URL
+        const matched = Object.entries(PROVIDERS).find(
+          ([, def]) => def.baseUrl === config.baseUrl
+        )
+        if (matched) {
+          setProvider(matched[0])
+          setCustomBaseUrl("")
+          setCustomModel("")
+          if (!PROVIDERS[matched[0]].models.includes(config.model)) {
+            setCustomModel(config.model)
+          } else {
+            setModel(config.model)
+          }
+        } else {
+          setCustomBaseUrl(config.baseUrl)
+          setCustomModel(config.model)
+        }
         setConfigured(true)
       } else {
-        setApiKey("")
-        setBaseUrl("")
-        setModel("")
-        setConfigured(false)
+        resetForm()
       }
       setShowKey(false)
       setTestResult(null)
+      setAdvanceOpen(false)
     }
   }, [settingsOpen])
 
-  const applyPreset = (id: PresetId) => {
-    const preset = PRESETS[id]
-    setBaseUrl(preset.baseUrl)
-    setModel(preset.model)
-    setTestResult(null)
+  const resetForm = () => {
+    setProvider("deepseek")
+    setApiKey("")
+    setModel("")
+    setShowKey(false)
+    setConfigured(false)
+    setCustomBaseUrl("")
+    setCustomModel("")
   }
 
   const handleSave = () => {
-    if (!apiKey.trim()) {
-      toast.warning("请输入 API Key")
-      return
-    }
-    if (!baseUrl.trim()) {
-      toast.warning("请输入 Base URL")
-      return
-    }
-    if (!model.trim()) {
-      toast.warning("请输入 Model")
-      return
-    }
-    saveAIConfig({ apiKey: apiKey.trim(), baseUrl: baseUrl.trim(), model: model.trim() })
+    if (!apiKey.trim()) { toast.warning("请输入 API Key"); return }
+    saveAIConfig({ apiKey: apiKey.trim(), baseUrl: effectiveBaseUrl, model: effectiveModel })
     setConfigured(true)
     setTestResult(null)
-    toast.success("API 配置已保存到本地")
+    toast.success("配置已保存到本地")
   }
 
   const handleClear = () => {
     clearAIConfig()
-    setApiKey("")
-    setBaseUrl("")
-    setModel("")
-    setConfigured(false)
-    setTestResult(null)
-    toast.success("API 配置已清除")
+    resetForm()
+    toast.success("配置已清除")
   }
 
   const handleTest = async () => {
-    if (!apiKey.trim() || !baseUrl.trim()) {
-      toast.warning("请先填写 API Key 和 Base URL")
-      return
-    }
+    if (!apiKey.trim()) { toast.warning("请先输入 API Key"); return }
     setTesting(true)
     setTestResult(null)
     try {
-      const res = await fetch(`${baseUrl.trim()}/models`, {
+      const res = await fetch(`${effectiveBaseUrl}/models`, {
         headers: { Authorization: `Bearer ${apiKey.trim()}` },
       })
       setTestResult({
@@ -101,7 +110,7 @@ export function SettingsDialog() {
         message: res.ok ? "连接成功" : `连接失败 (${res.status})`,
       })
     } catch {
-      setTestResult({ ok: false, message: "网络请求失败，请检查 Base URL" })
+      setTestResult({ ok: false, message: "网络请求失败，请检查网络" })
     } finally {
       setTesting(false)
     }
@@ -111,9 +120,9 @@ export function SettingsDialog() {
     <Dialog open={settingsOpen} onOpenChange={(open) => { if (!open) closeSettings() }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>AI 设置</DialogTitle>
+          <DialogTitle>模型配置</DialogTitle>
           <DialogDescription>
-            配置你的 OpenAI Compatible API，Key 仅保存在浏览器本地
+            配置你的模型服务，用于简历分析和 AI 优化
           </DialogDescription>
         </DialogHeader>
 
@@ -125,56 +134,34 @@ export function SettingsDialog() {
             {configured ? (
               <>
                 <CheckCircle2 className="size-4 shrink-0" />
-                <span className="text-sm">已配置 API — {model}</span>
+                <span className="text-sm">
+                  已配置：{apiKey ? maskApiKey(apiKey) : ""} · {effectiveModel}
+                </span>
               </>
             ) : (
               <>
                 <AlertTriangle className="size-4 shrink-0" />
-                <span className="text-sm">未配置 API — 请填写你的 API Key</span>
+                <span className="text-sm">未配置模型 — 请选择提供商并填写 API Key</span>
               </>
             )}
           </div>
 
-          {/* Presets */}
+          {/* Provider */}
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">快速预设</label>
-            <div className="flex gap-2">
-              {Object.entries(PRESETS).map(([id, preset]) => (
-                <button
-                  key={id}
-                  onClick={() => applyPreset(id as PresetId)}
-                  className={`flex-1 py-1.5 px-3 rounded-md text-xs font-medium border transition-colors ${
-                    baseUrl === preset.baseUrl
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-border hover:bg-muted"
-                  }`}
-                >
-                  {id === "deepseek" ? "DeepSeek" : "OpenRouter"}
-                </button>
+            <label className="text-sm font-medium">模型提供商</label>
+            <select
+              value={provider}
+              onChange={(e) => {
+                setProvider(e.target.value)
+                setModel("")
+                setTestResult(null)
+              }}
+              className="mt-1.5 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {Object.entries(PROVIDERS).map(([id, def]) => (
+                <option key={id} value={id}>{def.label}</option>
               ))}
-            </div>
-          </div>
-
-          {/* Base URL */}
-          <div>
-            <label className="text-sm font-medium">Base URL</label>
-            <Input
-              value={baseUrl}
-              onChange={(e) => { setBaseUrl(e.target.value); setTestResult(null) }}
-              placeholder="https://api.deepseek.com/v1"
-              className="mt-1.5 text-xs font-mono"
-            />
-          </div>
-
-          {/* Model */}
-          <div>
-            <label className="text-sm font-medium">Model</label>
-            <Input
-              value={model}
-              onChange={(e) => { setModel(e.target.value); setTestResult(null) }}
-              placeholder="deepseek-chat"
-              className="mt-1.5 text-xs font-mono"
-            />
+            </select>
           </div>
 
           {/* API Key */}
@@ -185,7 +172,7 @@ export function SettingsDialog() {
                 type={showKey ? "text" : "password"}
                 value={apiKey}
                 onChange={(e) => { setApiKey(e.target.value); setTestResult(null) }}
-                placeholder="sk-..."
+                placeholder={`${providerDef.label} API Key`}
                 className="pr-10 text-xs font-mono"
               />
               <button
@@ -196,6 +183,46 @@ export function SettingsDialog() {
                 {showKey ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
               </button>
             </div>
+            {provider === "openrouter" && (
+              <div className="flex items-center gap-2 mt-1.5">
+                <a
+                  href="https://openrouter.ai/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-blue-600 hover:underline inline-flex items-center gap-1"
+                >
+                  获取 OpenRouter API Key <ExternalLink className="size-2.5" />
+                </a>
+                <span className="text-[10px] text-muted-foreground">
+                  Base URL 是程序调用地址，不是网页访问地址
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Model */}
+          <div>
+            <label className="text-sm font-medium">模型</label>
+            <select
+              value={customModel || model || providerDef.defaultModel}
+              onChange={(e) => {
+                const val = e.target.value
+                if (val === "__custom__") {
+                  setCustomModel("")
+                } else if (providerDef.models.includes(val)) {
+                  setModel(val)
+                  setCustomModel("")
+                } else {
+                  setCustomModel(val)
+                }
+              }}
+              className="mt-1.5 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {providerDef.models.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+              <option value="__custom__">自定义模型...</option>
+            </select>
           </div>
 
           {/* Test result */}
@@ -208,10 +235,46 @@ export function SettingsDialog() {
             </div>
           )}
 
-          {/* Security notice */}
+          {/* Advanced */}
+          <div>
+            <button
+              onClick={() => setAdvanceOpen(!advanceOpen)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChevronDown className={`size-3 transition-transform ${advanceOpen ? "rotate-180" : ""}`} />
+              高级设置（可选）
+            </button>
+            {advanceOpen && (
+              <div className="mt-2 space-y-3 pl-1">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Base URL</label>
+                  <Input
+                    value={customBaseUrl || providerDef.baseUrl}
+                    onChange={(e) => setCustomBaseUrl(e.target.value)}
+                    placeholder={providerDef.baseUrl}
+                    className="mt-1 text-xs font-mono h-8"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    普通用户无需修改。支持任何 OpenAI Compatible API 地址。
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">自定义 Model</label>
+                  <Input
+                    value={customModel}
+                    onChange={(e) => setCustomModel(e.target.value)}
+                    placeholder="如: meta-llama/llama-4-maverick"
+                    className="mt-1 text-xs font-mono h-8"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Security */}
           <p className="text-[10px] text-muted-foreground leading-relaxed">
             <Key className="size-3 inline mr-1" />
-            Key 仅保存在你的浏览器本地，不会上传到服务器或数据库。请勿在公共电脑上保存自己的 Key。
+            API Key 仅保存在你的浏览器本地，不会上传到服务器或数据库。请勿在公共电脑上保存自己的 API Key。
           </p>
 
           {/* Actions */}
@@ -219,7 +282,7 @@ export function SettingsDialog() {
             <Button
               variant="outline" size="sm"
               onClick={handleTest}
-              disabled={testing || !apiKey.trim() || !baseUrl.trim()}
+              disabled={testing || !apiKey.trim()}
               className="flex-1 text-xs gap-1.5"
             >
               {testing ? <Loader2 className="size-3 animate-spin" /> : null}
@@ -228,7 +291,7 @@ export function SettingsDialog() {
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={!apiKey.trim() || !baseUrl.trim() || !model.trim()}
+              disabled={!apiKey.trim()}
               className="flex-1 text-xs gap-1.5"
             >
               保存

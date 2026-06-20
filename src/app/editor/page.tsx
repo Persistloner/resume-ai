@@ -9,7 +9,7 @@ import { ATSPanel } from "@/components/ats-panel"
 import { SettingsDialog } from "@/components/settings-dialog"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { useResumeStore } from "@/lib/store"
-import { Upload, PanelRightOpen, PanelRightClose, Wrench } from "lucide-react"
+import { Upload, PanelRightOpen, PanelRightClose, Cpu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type SectionId = "personal" | "work" | "project" | "education" | "skills"
@@ -82,8 +82,8 @@ export default function EditorPage() {
             onClick={openSettings}
             className="gap-1.5 text-xs h-8"
           >
-            <Wrench className="size-3.5" />
-            <span className="hidden sm:inline">AI 设置</span>
+            <Cpu className="size-3.5" />
+            <span className="hidden sm:inline">模型配置</span>
           </Button>
           <Button
             variant="ghost"
