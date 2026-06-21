@@ -33,9 +33,28 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# database
+/data/
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local AI/dev tools
+.claude/
+.playwright-mcp/
+
+# local backups / screenshots
+*.backup.tsx
+phase*-verification*.png
+template-*.png
+
+# unused server-side auth/db prototype
+api/
+src/lib/auth/
+src/lib/db/
+src/lib/rate-limit.ts
+src/lib/constants.ts
