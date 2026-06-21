@@ -1,155 +1,284 @@
-# Resume Builder — AI 智能简历生成器
+# ResumeAI
 
-AI 驱动的简历编辑与优化工具。支持 JD 匹配分析、ATS 评分、AI 经历优化、PDF/DOCX 导入解析、一键 PDF 导出。
+AI 智能简历编辑器，帮助求职者快速完成简历编辑、岗位匹配分析与 AI 优化。
 
-## 功能
+![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-green)
+![OpenAI](https://img.shields.io/badge/AI-OpenAI-purple)
+![License](https://img.shields.io/badge/License-MIT-orange)
+
+## 项目简介
+
+在海投求职过程中，我发现针对不同岗位频繁修改简历是一件非常耗时的事情：
+
+* 不知道 JD 真正关注什么
+* 不知道如何提炼自己的经历
+* 同一份简历需要反复修改
+* AI 工具生成内容容易空洞、不真实
+
+因此开发了 ResumeAI，希望通过 AI 辅助完成：
+
+* 简历导入与编辑
+* JD 岗位分析
+* 简历匹配度评估
+* AI 内容优化
+* PDF 导出
+
+帮助用户更高效地完成简历定制。
+
+---
+
+## 核心功能
 
 ### 简历编辑
-- **基本信息** — 姓名、职位、联系方式、个人简介
-- **工作经历** — 多段经历，支持日期范围、"至今"标记
-- **教育背景** — 学校、学位、专业、日期
-- **技能标签** — 动态添加/删除技能
 
-### AI 能力
-- **经历优化** — 基于真实经历进行职业化提炼，支持通用模式与 JD 匹配模式
-- **简历导入** — 上传 PDF/DOCX 自动解析并填充（DeepSeek 结构化提取）
-- **ATS 匹配分析** — JD 关键词提取、匹配度评分、缺失能力识别、优化建议生成
+支持：
 
-### 导出
-- **PDF 导出** — 一键导出标准 A4 格式简历，保持排版与中文显示
+* 基本信息
+* 工作经历
+* 项目经历
+* 教育背景
+* 专业技能
+
+实时编辑与预览。
+
+---
+
+### AI 岗位匹配分析
+
+输入目标 JD 后：
+
+* 提取岗位关键词
+* 分析能力要求
+* 输出匹配度分析
+* 识别优势与缺口
+
+帮助用户快速了解岗位要求。
+
+---
+
+### AI 简历优化
+
+支持针对：
+
+* 工作经历
+* 项目经历
+* 技能描述
+
+进行 AI 优化。
+
+优化原则：
+
+* 保持真实性
+* 提升表达质量
+* 强化关键词匹配
+* 避免过度包装
+
+---
+
+### 多模板简历
+
+当前支持：
+
+* 简约风
+* 商务风
+* 科技风
+* 创意风
+
+一键切换模板。
+
+---
+
+### PDF 导出
+
+支持：
+
+* A4 排版
+* 多页导出
+* 自动分页
+* 打印友好
+
+---
+
+### 简历导入
+
+支持：
+
+* DOCX
+* TXT
+
+自动解析并填充简历内容。
+
+---
+
+### 自定义 AI 配置
+
+支持用户自行配置：
+
+* DeepSeek
+* OpenAI
+* OpenRouter
+
+API Key 仅保存在本地浏览器。
+
+不会上传至开发者服务器。
+
+---
+
+## 项目截图
+
+### 编辑器
+
+（截图位置）
+
+### AI 岗位匹配分析
+
+（截图位置）
+
+### AI 优化
+
+（截图位置）
+
+### 模板切换
+
+（截图位置）
+
+### API 配置
+
+（截图位置）
+
+---
 
 ## 技术栈
 
-| 层级 | 技术 |
-|------|------|
-| 框架 | Next.js 16 (App Router + Turbopack) |
-| UI | React 19 + Tailwind CSS 4 + shadcn/ui |
-| 状态管理 | Zustand 5 |
-| AI | DeepSeek Chat API |
-| PDF 解析 | pdf-parse v2 |
-| DOCX 解析 | mammoth |
-| PDF 导出 | html2pdf.js (html2canvas + jsPDF) |
-| 文件上传 | react-dropzone |
+### 前端
 
-## 本地启动
+* Next.js 15
+* React
+* TypeScript
+* Tailwind CSS
+
+### AI
+
+* DeepSeek API
+* OpenAI API
+* OpenRouter
+
+### 文件处理
+
+* Mammoth
+* DOCX Parser
+
+### PDF
+
+* Browser Print
+* Print CSS
+
+---
+
+## 快速开始
+
+### 1. 克隆项目
 
 ```bash
-# 1. 安装依赖
+git clone https://github.com/Persistloner/resume-ai.git
+cd resume-ai
+```
+
+### 2. 安装依赖
+
+```bash
 npm install
+```
 
-# 2. 创建环境变量文件
-cp .env.example .env.local
+### 3. 启动项目
 
-# 3. 编辑 .env.local，填入 DeepSeek API Key
-# DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
-
-# 4. 启动开发服务器
+```bash
 npm run dev
-
-# 5. 打开浏览器
-# http://localhost:3000
 ```
 
-## 环境变量
+访问：
 
-| 变量 | 必填 | 说明 |
-|------|------|------|
-| `DEEPSEEK_API_KEY` | 是 | DeepSeek API Key，用于 AI 优化、ATS 分析、简历解析 |
-
-### 获取 DeepSeek API Key
-
-1. 访问 [platform.deepseek.com](https://platform.deepseek.com)
-2. 注册/登录账号
-3. 进入 API Keys 页面，创建新 Key
-4. 复制 Key 到 `.env.local` 中
-
-## 项目结构
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   ├── optimize/route.ts      # AI 经历优化
-│   │   ├── analyze-jd/route.ts    # ATS 匹配分析
-│   │   └── resume/parse/route.ts  # 简历文件解析
-│   ├── editor/page.tsx            # 编辑器页面
-│   ├── layout.tsx                 # 根布局
-│   └── page.tsx                   # 首页
-├── components/
-│   ├── ats-panel.tsx              # ATS 分析面板
-│   ├── experience-form.tsx        # 工作经历表单
-│   ├── education-form.tsx         # 教育经历表单
-│   ├── personal-info-form.tsx     # 基本信息表单
-│   ├── skills-form.tsx            # 技能表单
-│   ├── jd-input.tsx               # 目标 JD 输入
-│   ├── resume-form.tsx            # 表单容器（Tabs）
-│   ├── resume-preview.tsx         # A4 实时预览
-│   ├── export-pdf-button.tsx      # PDF 导出按钮
-│   ├── import-resume-dialog.tsx   # 简历导入对话框
-│   └── ui/                        # shadcn/ui 组件
-└── lib/
-    ├── ai/
-    │   ├── deepseek.ts            # DeepSeek API 客户端
-    │   ├── prompts/
-    │   │   ├── optimize-resume.ts # 经历优化 Prompt
-    │   │   ├── analyze-jd.ts      # JD 分析 Prompt
-    │   │   └── parse-resume.ts    # 简历解析 Prompt
-    │   └── evals/                 # Prompt 评测系统
-    ├── store.ts                   # Zustand 状态管理
-    ├── types.ts                   # TypeScript 类型
-    ├── export-pdf.ts              # PDF 导出工具
-    └── mock-data.ts               # 示例数据
+```text
+http://localhost:3000
 ```
 
-## Vercel 部署
+---
 
-### 步骤
+## API 配置
 
-1. **Fork/推送项目到 GitHub**
+首次使用需要配置模型接口。
 
-2. **在 Vercel 中导入项目**
-   - 访问 [vercel.com](https://vercel.com)
-   - 点击 "New Project" → 选择 Git 仓库
-   - Vercel 会自动识别 Next.js 项目
+进入：
 
-3. **配置环境变量**
-   - 在项目 Settings → Environment Variables 中添加：
-     ```
-     DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
-     ```
-   - 部署环境选择：Production + Preview + Development
+```text
+模型配置
+```
 
-4. **部署**
-   - 点击 "Deploy"
-   - Vercel 自动执行 `next build` 并部署
+选择：
 
-5. **自定义域名（可选）**
-   - Settings → Domains → 添加域名
+* DeepSeek
+* OpenAI
+* OpenRouter
 
-### Vercel 配置注意事项
+填写自己的 API Key 即可使用。
 
-- **Serverless Function 超时**：Vercel Pro 默认 60s，AI API 调用通常在 5–15s 内完成，无需调整
-- **请求体大小限制**：Serverless Function 默认 4.5MB。简历文件上传建议 < 4.5MB（可在 `next.config.ts` 中配置 `maxDuration`）
-- **冷启动**：AI API 路由首次调用可能有 1–2s 冷启动延迟
-- **环境变量**：务必在 Vercel Dashboard 中配置 `DEEPSEEK_API_KEY`，不要提交到 Git
+说明：
 
-## 部署检查清单
+* API Key 保存在本地浏览器
+* 不上传服务器
+* 不会被开发者获取
 
-- [ ] `npm run build` 通过，无错误
-- [ ] `.env.local` 中配置了 `DEEPSEEK_API_KEY`
-- [ ] Vercel Dashboard 中已添加 `DEEPSEEK_API_KEY` 环境变量
-- [ ] API 路由在部署后正常工作（可通过浏览器 DevTools Network 验证）
-- [ ] PDF 导出在浏览器中正常触发下载
-- [ ] 简历导入支持的文件类型（PDF/DOCX）正常解析
-- [ ] 首页 `/` 正常渲染
-- [ ] 编辑器 `/editor` 正常渲染
-- [ ] ATS 分析功能正常返回结果
+---
 
-## 已知限制
+## 产品设计原则
 
-| 限制 | 说明 |
-|------|------|
-| PDF 导入仅支持文本型 PDF | 扫描件/图片型 PDF 无法提取文字 |
-| DOCX 不支持嵌入式图表 | 图表/SmartArt 不会被提取 |
-| AI 依赖网络 | 所有 AI 功能需要 DeepSeek API 可访问 |
-| Vercel 4.5MB 上传限制 | 简历文件通常 < 1MB，一般不受影响 |
+ResumeAI 不追求“夸大经历”。
+
+核心原则：
+
+* 保持真实性
+* 强化表达
+* 提升匹配度
+* 辅助用户思考
+
+AI 应该帮助用户表达能力，而不是伪造能力。
+
+---
+
+## Roadmap
+
+### 已完成
+
+* [x] 简历编辑
+* [x] DOCX/TXT 导入
+* [x] AI 岗位分析
+* [x] AI 简历优化
+* [x] 多模板切换
+* [x] PDF 导出
+* [x] 自定义 API Key
+
+### 计划中
+
+* [ ] 简历版本管理
+* [ ] 更多简历模板
+* [ ] 多语言简历
+* [ ] 面试问题生成
+* [ ] 求职数据分析
+
+---
+
+## 开源协议
+
+MIT License
+
+---
+
+## 作者
+
+Marvin
+
+AI Product Manager Learner
+
+如果这个项目对你有帮助，欢迎 Star ⭐
