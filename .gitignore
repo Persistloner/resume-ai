@@ -54,7 +54,5 @@ template-*.png
 
 # unused server-side auth/db prototype
 api/
-src/lib/auth/
 src/lib/db/
-src/lib/rate-limit.ts
-src/lib/constants.ts
+
