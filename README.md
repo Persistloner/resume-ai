@@ -2,6 +2,8 @@
 
 AI 智能简历编辑器，帮助求职者快速完成简历编辑、岗位匹配分析与 AI 优化。
 
+支持 JD 分析、AI 优化、实时预览与 PDF 导出，让简历制作更高效、更结构化。
+
 ![Next.js](https://img.shields.io/badge/Next.js-15-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-green)
