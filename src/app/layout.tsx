@@ -17,8 +17,13 @@ import { FileText } from "lucide-react"
 import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
-  title: "简历生成器",
-  description: "简洁易用的简历编辑器，实时预览、AI 辅助优化",
+  title: "ResumeAI - AI 智能简历编辑器",
+  description: "AI 智能简历编辑器，支持 JD 分析、简历优化与 PDF 导出。",
+  openGraph: {
+    title: "ResumeAI - AI 智能简历编辑器",
+    description: "AI 智能简历编辑器，支持 JD 分析、简历优化与 PDF 导出。",
+    siteName: "ResumeAI",
+  },
 };
 
 export default function RootLayout({
@@ -35,7 +40,7 @@ export default function RootLayout({
         <header className="h-14 border-b flex items-center px-6 shrink-0 bg-background">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm hover:text-primary transition-colors">
             <FileText className="size-4" />
-            简历生成器
+            ResumeAI
           </Link>
         </header>
         {children}
